@@ -179,6 +179,28 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                     pch++;
                 }
                 break;
+            case '&':
+                if(pch[1] == '&')
+                {
+                    addTk(AND);
+                    pch += 2;
+                }
+                else
+                {
+                    err("invalid symbol: %c (%d)",*pch,*pch);
+                }
+                break;
+            case '|':
+                if(pch[1] == '|')
+                {
+                    addTk(OR);
+                    pch += 2;
+                }
+                else
+                {
+                    err("invalid symbol: %c (%d)",*pch,*pch);
+                }
+                break;
             default:
                 if(isalpha(*pch)||*pch=='_')
                 {
