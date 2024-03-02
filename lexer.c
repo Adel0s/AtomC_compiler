@@ -59,6 +59,23 @@ char *extract(const char *begin,const char *end)
     return extracted_text;
 }
 
+void *remove_quotes(char *text)
+{
+    int i, j;
+    size_t len = strlen(text);
+
+    /// vezi de ce e necesar sa pui -1 ca altfel afiseaza un caracter in plus...
+    for(i = 0, j = 0; i < len-1; i++)
+    {
+        if(text[i] != '"')
+        {
+            text[j++] = text[i];
+        }
+    }
+
+    text[j] = '\0';
+}
+
 /// de completat
 Token *tokenize(const char *pch)  /// pch = pointer to current char
 {
@@ -225,8 +242,12 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                         tk->text=text;
                     }
                 }
-                /// de adaugat pentru numere si clase de caractere
-                /// else if()
+                /// de adaugat pentru numere
+                /*
+                    INT: [0-9]+
+                    DOUBLE: [0-9]+ ( '.' [0-9]+ ( [eE] [+-]? [0-9]+ )? | ( '.' [0-9]+ )? [eE] [+-]? [0-9]+ )
+                    de completat pentru double sa permita si scrierea cu e sau E
+                 */
                 else if(isdigit(*pch) || *pch=='.')
                 {
                     for (start = pch++; isdigit(*pch) || *pch=='.' ; pch++) {}
@@ -246,6 +267,25 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                         tk= addTk(INT);
                         tk->i=(int)value; //casting double to int value
                     }
+                }
+                /// si clase de caractere
+                /// STRING: ["] [^"]* ["]
+                else if(*pch == '\"')
+                {
+                    for (start = pch++; *pch!='\"'; pch++) {}
+
+                    // Extract string. Example puts("abc"); -> text value = "abc"
+                    char *text = extract(start, pch);
+                    text[strlen(text)]='"';
+                    // Add string terminator
+                    text[strlen(text)+1]='\0';
+                    // Set current pointer on the last character from string "text"
+                    pch++;
+
+                    // We should remove " characters
+                    remove_quotes(text);
+                    tk=addTk(STRING);
+                    tk->text=text;
                 }
                 else err("invalid char: %c (%d)",*pch,*pch);
         }
@@ -387,6 +427,15 @@ void showTokens(const Token *tokens)
                 strcpy(code, "DOUBLE");
                 type_double_value = (double*)safeAlloc((size_t)sizeof(double));
                 *type_double_value = tk->d;
+                break;
+            case 36:
+                strcpy(code, "CHAR");
+                break;
+            case 37:
+                strcpy(code, "STRING");
+                length = strlen(tk->text);
+                text = (char*)safeAlloc((size_t)length+1);
+                strcpy(text, tk->text);
                 break;
             default:
                 strcpy(code, "N\\A");
