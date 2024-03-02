@@ -127,8 +127,11 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 pch++;
                 break;
             case '.':
-                addTk(DOT);
-                pch++;
+                if(isdigit(pch[1]) == 0)
+                {
+                    addTk(DOT);
+                    pch++;
+                }
                 break;
                 /// to implement for AND &&, OR ||, DIV /, LINECOMMENT //
             case '=':
@@ -191,7 +194,7 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 }
                 break;
             case '|':
-                if(pch[1] == '|')
+                if(pch[1]== '|')
                 {
                     addTk(OR);
                     pch += 2;
