@@ -143,6 +143,19 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 addTk(MUL);
                 pch++;
                 break;
+            case '/':
+                if(pch[1] == '/')  ///vezi cum implemenetezi pentru linecomment sa mearga pe mai multe platforme
+                {
+                    pch++;
+                    for(start=pch++; *pch!='\n'; pch++) {}
+                    line++;
+                    break;
+                }
+                else{
+                    addTk(DIV);
+                    pch++;
+                    break;
+                }
             case '.':
                 if(isdigit(pch[1]) == 0)
                 {

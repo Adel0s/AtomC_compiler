@@ -1,12 +1,18 @@
+// program de testare a analizorului lexical, v1.1
+
 int main()
 {
-    char cra = 'a';
-    char digit = '1'
-    int t_ = 4;
-    double i = 1.5;
-    puts("abc");
-    while(t_ && i || t_)
+    int i;
+    i = 0;
+    while (i < 10)
     {
-        int i;
+        if (i / 2 == 1)
+            puti(i);
+        i = i + 1;
     }
+    if (4.9 == 4.9 && 4.9 == 2.45 * 2.0)
+        puts("yes");
+    putc('#');
+    puts(""); // pentru \n
+    return 0;
 }
