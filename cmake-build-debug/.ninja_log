@@ -1,0 +1,9 @@
+# ninja log v5
+3	353	7310755882623196	CMakeFiles/AtomC_copy.dir/lexer.c.obj	3e8992f70444619a
+6	499	7310755119794527	CMakeFiles/AtomC_copy.dir/utils.c.obj	3db6ca54320261c1
+6	383	7310757520231614	CMakeFiles/AtomC_copy.dir/main.c.obj	e0a74ad9dd82ecf0
+384	683	7310757523172551	AtomC_copy.exe	1b135297843c5b1
+3	560	7310759686821439	CMakeFiles/AtomC_copy.dir/main.c.obj	427162688b5c45d2
+46	580	7310759686971451	CMakeFiles/AtomC_copy.dir/lexer.c.obj	807ce9e673975b5
+79	581	7310759687011425	CMakeFiles/AtomC_copy.dir/utils.c.obj	b7f6e854ffd33b41
+581	859	7310759689778821	AtomC_copy.exe	1b135297843c5b1

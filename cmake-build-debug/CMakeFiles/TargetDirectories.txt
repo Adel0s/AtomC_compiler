@@ -1,0 +1,3 @@
+F:/Facultate/AN3-SEM2/LFTC/Project/AtomC/cmake-build-debug/CMakeFiles/AtomC_copy.dir
+F:/Facultate/AN3-SEM2/LFTC/Project/AtomC/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/Facultate/AN3-SEM2/LFTC/Project/AtomC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
