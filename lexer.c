@@ -221,6 +221,18 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                     err("invalid symbol: %c (%d)",*pch,*pch);
                 }
                 break;
+            case '\'':
+                if(pch[1] != '\'' && pch[2] == '\'')
+                {
+                    tk=addTk(CHAR);
+                    tk->c = pch[1];
+                    pch += 3;
+                }
+                else
+                {
+                    err("invalid symbol: %c (%d)",*pch,*pch);
+                }
+                break;
             default:
                 if(isalpha(*pch)||*pch=='_')
                 {
@@ -302,6 +314,7 @@ void showTokens(const Token *tokens)
     char *text;
     int *type_int_value;
     double *type_double_value;
+    char c = '\0';
 
     for(tk=tokens; tk; tk=tk->next)
     {
@@ -310,6 +323,7 @@ void showTokens(const Token *tokens)
         text = NULL;
         type_int_value = NULL;
         type_double_value = NULL;
+        c = '\0';
 
         switch(tk->code)
         {
@@ -430,6 +444,7 @@ void showTokens(const Token *tokens)
                 break;
             case 36:
                 strcpy(code, "CHAR");
+                c = tk->c;
                 break;
             case 37:
                 strcpy(code, "STRING");
@@ -452,6 +467,10 @@ void showTokens(const Token *tokens)
         else if(type_double_value)
         {
             printf("%d %s: %f\n", tk->line, code, *type_double_value);
+        }
+        else if(c != '\0')
+        {
+            printf("%d %s: %c\n", tk->line, code, c);
         }
         else
         {

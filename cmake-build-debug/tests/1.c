@@ -1,5 +1,7 @@
 int main()
 {
+    char cra = 'a';
+    char digit = '1'
     int t_ = 4;
     double i = 1.5;
     puts("abc");
