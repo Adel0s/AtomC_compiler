@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -199,8 +200,28 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                         tk->text=text;
                     }
                 }
-                    /// de adaugat pentru numere si clase de caractere
-                    /// else if()
+                /// de adaugat pentru numere si clase de caractere
+                /// else if()
+                else if(isdigit(*pch) || *pch=='.')
+                {
+                    for (start = pch++; isdigit(*pch) || *pch=='.' ; pch++) {}
+                    char *text = extract(start, pch);
+                    char *text_to_double = NULL;
+
+                    // convert text to double
+                    double value = strtod(text, &text_to_double);
+
+                    if(strchr(text, '.') != NULL)
+                    {
+                        tk=addTk(DOUBLE);
+                        tk->d=value;
+                    }
+                    else
+                    {
+                        tk= addTk(INT);
+                        tk->i=(int)value; //casting double to int value
+                    }
+                }
                 else err("invalid char: %c (%d)",*pch,*pch);
         }
     }
@@ -213,10 +234,18 @@ void showTokens(const Token *tokens)
     const Token *tk;
     char code[12];
 
+    char *text;
+    int *type_int_value;
+    double *type_double_value;
+
     for(tk=tokens; tk; tk=tk->next)
     {
         size_t length = 0;
-        char *text = NULL;
+
+        text = NULL;
+        type_int_value = NULL;
+        type_double_value = NULL;
+
         switch(tk->code)
         {
             case 0:
@@ -324,6 +353,16 @@ void showTokens(const Token *tokens)
             case 33:
                 strcpy(code, "SUB");
                 break;
+            case 34:
+                strcpy(code, "INT");
+                type_int_value = (int*)safeAlloc((size_t)sizeof(int));
+                *type_int_value = tk->i;
+                break;
+            case 35:
+                strcpy(code, "DOUBLE");
+                type_double_value = (double*)safeAlloc((size_t)sizeof(double));
+                *type_double_value = tk->d;
+                break;
             default:
                 strcpy(code, "N\\A");
         }
@@ -332,9 +371,20 @@ void showTokens(const Token *tokens)
         {
             printf("%d %s: %s\n", tk->line, code, text);
         }
+        else if(type_int_value)
+        {
+            printf("%d %s: %d\n", tk->line, code, *type_int_value);
+        }
+        else if(type_double_value)
+        {
+            printf("%d %s: %f\n", tk->line, code, *type_double_value);
+        }
         else
         {
             printf("%d %s\n", tk->line, code);
         }
     }
+    free(text);
+    free(type_double_value);
+    free(type_int_value);
 }

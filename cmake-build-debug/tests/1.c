@@ -1,11 +1,9 @@
 int main()
 {
-!= 
-> >=
-< <=
-while(!){
-int i;
-}
-char t_=;
-double i; 
+    while(!)
+    {
+        int i;
+    }
+    int t_ = 4;
+    double i = 1.5;
 }
