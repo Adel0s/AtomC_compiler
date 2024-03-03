@@ -267,15 +267,13 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                         tk->text=text;
                     }
                 }
-                /// de adaugat pentru numere
-                /*
-                    INT: [0-9]+
-                    DOUBLE: [0-9]+ ( '.' [0-9]+ ( [eE] [+-]? [0-9]+ )? | ( '.' [0-9]+ )? [eE] [+-]? [0-9]+ )
-                    de completat pentru double sa permita si scrierea cu e sau E
-                 */
-                else if(isdigit(*pch) || *pch=='.')
+                // de completat pentru double sa permita si scrierea cu e sau E
+                // DOUBLE: [0-9]+ ( '.' [0-9]+ ( [eE] [+-]? [0-9]+ )? | ( '.' [0-9]+ )? [eE] [+-]? [0-9]+ )
+                else if(isdigit(*pch))
                 {
-                    for (start = pch++; isdigit(*pch) || *pch=='.' ; pch++) {}
+                    for(start=pch++; isdigit(*pch) || *pch=='.' ||
+                                     ((*pch=='e' || *pch=='E') && (*(pch+1)=='-' || (*(pch+1)=='+' || isdigit(*(pch+1)) ) )) ||
+                                     ((*(pch-1)=='e' || *(pch-1)=='E') && (*pch=='-' || (*pch=='+' || isdigit(*pch) ) )); pch++) {}
                     char *text = extract(start, pch);
                     char *text_to_double = NULL;
 
@@ -287,6 +285,7 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                         tk=addTk(DOUBLE);
                         tk->d=value;
                     }
+                    // INT: [0-9]+
                     else
                     {
                         tk= addTk(INT);
