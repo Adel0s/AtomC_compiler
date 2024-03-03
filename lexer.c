@@ -148,7 +148,6 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 {
                     pch++;
                     for(start=pch++; *pch!='\n'; pch++) {}
-                    line++;
                     break;
                 }
                 else{
