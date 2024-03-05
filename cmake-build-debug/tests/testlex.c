@@ -1,5 +1,4 @@
 // program de testare a analizorului lexical, v1.1
-#include <stdio.h>
 
 int main()
 {

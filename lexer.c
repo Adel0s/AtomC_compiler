@@ -275,11 +275,10 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                                      ((*(pch-1)=='e' || *(pch-1)=='E') && (*pch=='-' || (*pch=='+' || isdigit(*pch) ) )); pch++) {}
                     char *text = extract(start, pch);
                     char *text_to_double = NULL;
-
                     // convert text to double
                     double value = strtod(text, &text_to_double);
 
-                    if(strchr(text, '.') != NULL)
+                    if(strchr(text, '.') || strchr(text, 'e') || strchr(text, 'E') || strchr(text, '-') || strchr(text, '+'))
                     {
                         tk=addTk(DOUBLE);
                         tk->d=value;
