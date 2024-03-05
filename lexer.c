@@ -240,7 +240,7 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 }
                 else
                 {
-                    err("invalid symbol: %c (%d)",*pch,*pch);
+                    err("invalid char: %c (%d)",*pch,*pch);
                 }
                 break;
             default:
@@ -338,7 +338,7 @@ void showTokens(const Token *tokens)
 
         switch(tk->code)
         {
-            case 0:
+            case ID:
                 strcpy(code, "ID");
                 length = strlen(tk->text);
                 text = (char*)safeAlloc((size_t)length+1);
