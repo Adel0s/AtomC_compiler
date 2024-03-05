@@ -64,7 +64,7 @@ void *remove_quotes(char *text)
     int i, j;
     size_t len = strlen(text);
 
-    /// vezi de ce e necesar sa pui -1 ca altfel afiseaza un caracter in plus...
+
     for(i = 0, j = 0; i < len-1; i++)
     {
         if(text[i] != '"')
@@ -76,7 +76,6 @@ void *remove_quotes(char *text)
     text[j] = '\0';
 }
 
-/// de completat
 Token *tokenize(const char *pch)  /// pch = pointer to current char
 {
     const char *start;
@@ -162,7 +161,6 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                     pch++;
                 }
                 break;
-                /// to implement for AND &&, OR ||, DIV /, LINECOMMENT //
             case '=':
                 if(pch[1]=='=')
                 {
@@ -271,7 +269,8 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 else if(isdigit(*pch))
                 {
                     for(start=pch++; isdigit(*pch) || *pch=='.' ||
-                                     ((*pch=='e' || *pch=='E') && (*(pch+1)=='-' || (*(pch+1)=='+' || isdigit(*(pch+1)) ) )) ||
+                                     ((*pch=='e' || *pch=='E') && (*(pch+1)=='-' || (*(pch+1)=='+' || isdigit(*(pch+1)) ||
+                                             isdigit(*(pch-1))) )) ||
                                      ((*(pch-1)=='e' || *(pch-1)=='E') && (*pch=='-' || (*pch=='+' || isdigit(*pch) ) )); pch++) {}
                     char *text = extract(start, pch);
                     char *text_to_double = NULL;
@@ -296,15 +295,17 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 {
                     for (start = pch++; *pch!='\"'; pch++) {}
 
-                    // Extract string. Example puts("abc"); -> text value = "abc"
+                    // Extract string. Example puts("abc"); -> text value = "abc
                     char *text = extract(start, pch);
                     text[strlen(text)]='"';
+
                     // Add string terminator
                     text[strlen(text)+1]='\0';
+
                     // Set current pointer on the last character from string "text"
                     pch++;
 
-                    // We should remove " characters
+                    // We should remove " character
                     remove_quotes(text);
                     tk=addTk(STRING);
                     tk->text=text;
@@ -314,10 +315,10 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
     }
 }
 
-/// de completat
-/// afisarea liniei iar in loc de cod va trebui sa afiseze numele atomului si daca e cazul -> caracterele din care e format identificatorul.
 void showTokens(const Token *tokens)
 {
+    FILE* fout = fopen("lista-de-atomi-copy.txt", "w"); //opening file for write
+
     const Token *tk;
     char code[12];
 
@@ -468,26 +469,33 @@ void showTokens(const Token *tokens)
 
         if(text)
         {
-            printf("%d %s: %s\n", tk->line, code, text);
+            printf("%d \t%s: %s\n", tk->line, code, text);
+            fprintf(fout, "%d \t%s: %s\n", tk->line, code, text);
         }
         else if(type_int_value)
         {
-            printf("%d %s: %d\n", tk->line, code, *type_int_value);
+            printf("%d \t%s: %d\n", tk->line, code, *type_int_value);
+            fprintf(fout, "%d \t%s: %d\n", tk->line, code, *type_int_value);
         }
         else if(type_double_value)
         {
-            printf("%d %s: %f\n", tk->line, code, *type_double_value);
+            printf("%d \t%s: %f\n", tk->line, code, *type_double_value);
+            fprintf(fout, "%d \t%s: %f\n", tk->line, code, *type_double_value);
         }
         else if(c != '\0')
         {
-            printf("%d %s: %c\n", tk->line, code, c);
+            printf("%d \t%s: %c\n", tk->line, code, c);
+            fprintf(fout, "%d \t%s: %c\n", tk->line, code, c);
         }
         else
         {
-            printf("%d %s\n", tk->line, code);
+            printf("%d \t%s\n", tk->line, code);
+            fprintf(fout, "%d \t%s\n", tk->line, code);
         }
     }
     free(text);
     free(type_double_value);
     free(type_int_value);
+
+    fclose(fout);
 }
