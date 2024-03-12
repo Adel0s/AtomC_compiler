@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "lexer.h"
+#include "parser.h"
 
 int main()
 {
@@ -11,6 +12,9 @@ int main()
     // va returna lista atomilor extrasi din fisierul incarcat in input_buffer
     Token *tokens = tokenize(input_buffer);
     showTokens(tokens);
+
+    // integrare analizor sintactic
+    //parse(tokens);
 
     free(input_buffer);
 

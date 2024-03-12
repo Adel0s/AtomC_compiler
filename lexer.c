@@ -344,120 +344,120 @@ void showTokens(const Token *tokens)
                 text = (char*)safeAlloc((size_t)length+1);
                 strcpy(text, tk->text);
                 break;
-            case 1:
+            case TYPE_INT:
                 strcpy(code, "TYPE_INT");
                 break;
-            case 2:
+            case TYPE_CHAR:
                 strcpy(code, "TYPE_CHAR");
                 break;
-            case 3:
+            case TYPE_DOUBLE:
                 strcpy(code, "TYPE_DOUBLE");
                 break;
-            case 4:
+            case ELSE:
                 strcpy(code, "ELSE");
                 break;
-            case 5:
+            case IF:
                 strcpy(code, "IF");
                 break;
-            case 6:
+            case RETURN:
                 strcpy(code, "RETURN");
                 break;
-            case 7:
+            case STRUCT:
                 strcpy(code, "STRUCT");
                 break;
-            case 8:
+            case VOID:
                 strcpy(code, "VOID");
                 break;
-            case 9:
+            case WHILE:
                 strcpy(code, "WHILE");
                 break;
-            case 10:
+            case COMMA:
                 strcpy(code, "COMMA");
                 break;
-            case 11:
+            case SEMICOLON:
                 strcpy(code, "SEMICOLON");
                 break;
-            case 12:
+            case LPAR:
                 strcpy(code, "LPAR");
                 break;
-            case 13:
+            case RPAR:
                 strcpy(code, "RPAR");
                 break;
-            case 14:
+            case LBRACKET:
                 strcpy(code, "LBRACKET");
                 break;
-            case 15:
+            case RBRACKET:
                 strcpy(code, "RBRACKET");
                 break;
-            case 16:
+            case LACC:
                 strcpy(code, "LACC");
                 break;
-            case 17:
+            case RACC:
                 strcpy(code, "RACC");
                 break;
-            case 18:
+            case END:
                 strcpy(code, "END");
                 break;
-            case 19:
+            case ADD:
                 strcpy(code, "ADD");
                 break;
-            case 20:
+            case MUL:
                 strcpy(code, "MUL");
                 break;
-            case 21:
+            case DIV:
                 strcpy(code, "DIV");
                 break;
-            case 22:
+            case DOT:
                 strcpy(code, "DOT");
                 break;
-            case 23:
+            case AND:
                 strcpy(code, "AND");
                 break;
-            case 24:
+            case OR:
                 strcpy(code, "OR");
                 break;
-            case 25:
+            case NOT:
                 strcpy(code, "NOT");
                 break;
-            case 26:
+            case NOTEQ:
                 strcpy(code, "NOTEQ");
                 break;
-            case 27:
+            case LESS:
                 strcpy(code, "LESS");
                 break;
-            case 28:
+            case LESSEQ:
                 strcpy(code, "LESSEQ");
                 break;
-            case 29:
+            case GREATER:
                 strcpy(code, "GREATER");
                 break;
-            case 30:
+            case GREATEREQ:
                 strcpy(code, "GREATEREQ");
                 break;
-            case 31:
+            case ASSIGN:
                 strcpy(code, "ASSIGN");
                 break;
-            case 32:
+            case EQUAL:
                 strcpy(code, "EQUAL");
                 break;
-            case 33:
+            case SUB:
                 strcpy(code, "SUB");
                 break;
-            case 34:
+            case INT:
                 strcpy(code, "INT");
                 type_int_value = (int*)safeAlloc((size_t)sizeof(int));
                 *type_int_value = tk->i;
                 break;
-            case 35:
+            case DOUBLE:
                 strcpy(code, "DOUBLE");
                 type_double_value = (double*)safeAlloc((size_t)sizeof(double));
                 *type_double_value = tk->d;
                 break;
-            case 36:
+            case CHAR:
                 strcpy(code, "CHAR");
                 c = tk->c;
                 break;
-            case 37:
+            case STRING:
                 strcpy(code, "STRING");
                 length = strlen(tk->text);
                 text = (char*)safeAlloc((size_t)length+1);

@@ -7,4 +7,6 @@ add_executable(AtomC_copy main.c
         lexer.c
         lexer.h
         utils.c
-        utils.h)
+        utils.h
+        parser.c
+        parser.h)
