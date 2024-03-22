@@ -169,7 +169,38 @@ bool exprAndPrim() {
             }
         }
     }
-    return true;
+    return true; //epsilon
+}
+
+// exprEq: exprEq ( EQUAL | NOTEQ ) exprRel | exprRel
+// alfa1 = ( EQUAL | NOTEQ ) exprRel     beta1 = exprRel
+// exprEq = exprRel exprEqPrim
+// exprEqPrim = ( EQUAL | NOTEQ ) exprRel exprEqPrim | epsilon
+bool exprEq() {
+    if(exprRel()) {
+        if(exprEqPrim()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exprEqPrim() {
+    if(consume(EQUAL)) {
+        if(exprRel()) {
+            if(exprEqPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(NOTEQ)) {
+        if(exprRel()) {
+            if(exprEqPrim()) {
+                return true;
+            }
+        }
+    }
+    return true; //epsilon
 }
 
 // exprAssign: exprUnary ASSIGN exprAssign | exprOr
@@ -181,6 +212,181 @@ bool exprAssign() {
             }
             else if(exprOr()) {
                 return true;
+            }
+        }
+    }
+    return false;
+}
+
+// exprRel: exprRel ( LESS | LESSEQ | GREATER | GREATEREQ ) exprAdd | exprAdd
+// exprRel: exprAdd exprRelPrim
+// exprRelPrim: (LESS | LESSEQ | GREATER | GREATEREQ) exprAdd exprRelPrim | epsilon
+bool exprRel() {
+    if(exprAdd()) {
+        if(exprRelPrim()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exprRelPrim() {
+    // merge oare asa? SAU trebuie if(consume(LESS)) else if(consume(LESSEQ) ) else if(consume(GREATER))...
+    if(consume(LESS) || consume(LESSEQ) || consume(GREATER) || consume(GREATEREQ)) {
+        if(exprAdd()) {
+            if(exprRelPrim()) {
+                return true;
+            }
+        }
+    }
+    return true; // epsilon
+}
+
+// exprAdd: exprAdd ( ADD | SUB ) exprMul | exprMul
+// exprAdd: exprMul exprAddPrim
+// exprAddPrim: (ADD | SUB) exprMul exprAddPrim | epsilon
+bool exprAdd() {
+    if(exprMul()) {
+        if(exprAddPrim()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exprAddPrim() {
+    if(consume(ADD) || consume(SUB)) {
+        if(exprMul()) {
+            if(exprAddPrim()) {
+                return true;
+            }
+        }
+    }
+    return true; // epsilon
+}
+
+// exprMul: exprMul ( MUL | DIV ) exprCast | exprCast eliminam recursivitatea la stanga
+// alfa1 = ( MUL | DIV ) exprCast    beta1 = exprCast
+// exprMul = beta1 exprMulPrim   --->   exprMul = exprCast exprMulPrim
+// exprMulPrim = alfa1 exprMulPrim | epsilon   --->   exprMulPrim = ( MUL | DIV ) exprCast exprMulPrim | epsilon
+bool exprMul() {
+    if(exprCast()) {
+        if(exprMulPrim()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exprMulPrim() {
+    if(consume(MUL) || consume(DIV)) {
+        if(exprCast()) {
+            if(exprMulPrim()) {
+                return true;
+            }
+        }
+    }
+    return true; // epsilon
+}
+
+// exprCast: LPAR typeBase arrayDecl? RPAR exprCast | exprUnary
+bool exprCast() {
+    if(consume(LPAR)) {
+        if(typeBase()) {
+            if(arrayDecl()) {
+                if(consume(RPAR)) {
+                    if(exprCast()) {
+                        return true;
+                    }
+                }
+            }
+            // arrayDecl? - tratare caz optionalitate
+            if(consume(RPAR)) {
+                if(exprCast()) {
+                    return true;
+                }
+            }
+        }
+    }
+    else if(exprUnary()) {
+        return true;
+    }
+    return false;
+}
+
+// exprUnary: ( SUB | NOT ) exprUnary | exprPostfix
+bool exprUnary() {
+    if(consume(SUB) || consume(NOT)) {
+        if(exprUnary()) {
+            return true;
+        }
+    }
+    if(exprPostfix()) {
+        return true;
+    }
+    return false;
+}
+
+// exprPostfix: exprPostfix LBRACKET expr RBRACKET
+//      | exprPostfix DOT ID
+//      | exprPrimary
+// alfa1 = LBRACKET expr RBRACKET    alfa2 = DOT ID   beta1 = exprPrimary
+// exprPostfix = beta1 exprPostfixPrim   --->   exprPrimary exprPosfixPrim
+// exprPostfixPrim = alfa1 exprPostfixPrim | alfa2 exprPostfixPrim | epsilon
+// exprPostfixPrim   --->   LBRACKET expr RBRACKET exprPostfixPrim | DOT ID exprPostfixPrim | epsilon
+
+bool exprPostfix() {
+    if(exprPrimary()) {
+        if(exprPostfixPrim()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exprPostfixPrim() {
+    if(consume(LBRACKET)) {
+        if(expr()) {
+            if(consume(RBRACKET)) {
+                if(exprPostfixPrim()) {
+                    return true;
+                }
+            }
+        }
+    }
+    if(consume(DOT)) {
+        if(consume(ID)) {
+            if(exprPostfixPrim()) {
+                return true;
+            }
+        }
+    }
+    return true;
+}
+
+// exprPrimary: ID ( LPAR ( expr ( COMMA expr )* )? RPAR )?
+//      | INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
+//   !!!   trebuie verificata logica   !!!
+bool exprPrimary() {
+    if(consume(ID)) {
+        if(consume(LPAR)) {
+            if(expr()) {
+                for(;;) {
+                    if(consume(COMMA)) {
+                        if(expr()) {}
+                    }
+                    else break;
+                }
+            }
+            if(consume(RPAR)) {}
+            return true;
+        }
+        else if(consume(INT) || consume(DOUBLE) || consume(CHAR) || consume(STRING)){}
+        else if(consume(LPAR)) {
+            if(expr()) {
+                if(consume(RPAR)) {
+                    return true;
+                }
             }
         }
     }
