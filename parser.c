@@ -34,6 +34,7 @@ bool consume(int code){
 // ATENTIE: totul sau nimic(daca functia consuma toata regula atunci va returna true)
 // nu avem voie ca o functie sa cosume doar o parte din atomi
 bool typeBase(){
+    printf("#typeBase: %d\n", iTk->code);
     Token *start = iTk;
 	if(consume(TYPE_INT)){
 		return true;
@@ -55,6 +56,7 @@ bool typeBase(){
 
 // arrayDecl: LBRACKET INT? RBRACKET
 bool arrayDecl(){
+    printf("#arrayDecl: %d\n", iTk->code);
     if(consume(LBRACKET)){
         if(consume(INT)){
             if(consume(RBRACKET)){
@@ -70,6 +72,7 @@ bool arrayDecl(){
 
 // varDef: typeBase ID arrayDecl? SEMICOLON
 bool varDef(){
+    printf("#varDef: %d\n", iTk->code);
     if(typeBase()){
         if(consume(ID)){
             if(arrayDecl()){
@@ -87,6 +90,7 @@ bool varDef(){
 
 // STRUCT ID LACC varDef* RACC SEMICOLON
 bool structDef(){
+    printf("#structDef: %d\n", iTk->code);
     if(consume(STRUCT)) {
         if(consume(ID)) {
             if(consume(LACC)) {
@@ -111,6 +115,7 @@ bool structDef(){
 
 // fnParam: typeBase ID arrayDecl?
 bool fnParam() {
+    printf("#fnParam: %d\n", iTk->code);
     if(typeBase()) {
         if(consume(ID)){
             if(arrayDecl()) {
@@ -129,6 +134,7 @@ bool fnParam() {
 // exprOrPrim: OR exprAnd exprOrPrim | epsilon
 
 bool exprOrPrim() {
+    printf("#exprOrPrim: %d\n", iTk->code);
     if(consume(OR)) {
         if(exprAnd()) {
             if(exprOrPrim()) {
@@ -140,6 +146,7 @@ bool exprOrPrim() {
 }
 
 bool exprOr() {
+    printf("#exprOr: %d\n", iTk->code);
     if(exprAnd()) {
         if(exprOrPrim()) {
             return true;
@@ -153,6 +160,7 @@ bool exprOr() {
 //exprAnd' -> AND exprEq exprAnd' | ϵ
 
 bool exprAnd() {
+    printf("#exprAnd: %d\n", iTk->code);
     if(exprEq()) {
         if(exprAndPrim()) {
             return true;
@@ -162,6 +170,7 @@ bool exprAnd() {
 }
 
 bool exprAndPrim() {
+    printf("#exprAndPrim: %d\n", iTk->code);
     if(consume(AND)) {
         if(exprEq()) {
             if(exprAndPrim()) {
@@ -177,6 +186,7 @@ bool exprAndPrim() {
 // exprEq = exprRel exprEqPrim
 // exprEqPrim = ( EQUAL | NOTEQ ) exprRel exprEqPrim | epsilon
 bool exprEq() {
+    printf("#exprEq: %d\n", iTk->code);
     if(exprRel()) {
         if(exprEqPrim()) {
             return true;
@@ -186,6 +196,7 @@ bool exprEq() {
 }
 
 bool exprEqPrim() {
+    printf("#exprEqPrim: %d\n", iTk->code);
     if(consume(EQUAL)) {
         if(exprRel()) {
             if(exprEqPrim()) {
@@ -205,6 +216,7 @@ bool exprEqPrim() {
 
 // exprAssign: exprUnary ASSIGN exprAssign | exprOr
 bool exprAssign() {
+    printf("#exprAssign: %d\n", iTk->code);
     if(exprUnary()) {
         if(consume(ASSIGN)) {
             if(exprAssign()){
@@ -222,6 +234,7 @@ bool exprAssign() {
 // exprRel: exprAdd exprRelPrim
 // exprRelPrim: (LESS | LESSEQ | GREATER | GREATEREQ) exprAdd exprRelPrim | epsilon
 bool exprRel() {
+    printf("#exprRel: %d\n", iTk->code);
     if(exprAdd()) {
         if(exprRelPrim()) {
             return true;
@@ -231,6 +244,7 @@ bool exprRel() {
 }
 
 bool exprRelPrim() {
+    printf("#exprRelPrim: %d\n", iTk->code);
     // merge oare asa? SAU trebuie if(consume(LESS)) else if(consume(LESSEQ) ) else if(consume(GREATER))...
     if(consume(LESS) || consume(LESSEQ) || consume(GREATER) || consume(GREATEREQ)) {
         if(exprAdd()) {
@@ -246,6 +260,7 @@ bool exprRelPrim() {
 // exprAdd: exprMul exprAddPrim
 // exprAddPrim: (ADD | SUB) exprMul exprAddPrim | epsilon
 bool exprAdd() {
+    printf("#exprAdd: %d\n", iTk->code);
     if(exprMul()) {
         if(exprAddPrim()) {
             return true;
@@ -255,6 +270,7 @@ bool exprAdd() {
 }
 
 bool exprAddPrim() {
+    printf("#exprAddPrim: %d\n", iTk->code);
     if(consume(ADD) || consume(SUB)) {
         if(exprMul()) {
             if(exprAddPrim()) {
@@ -270,6 +286,7 @@ bool exprAddPrim() {
 // exprMul = beta1 exprMulPrim   --->   exprMul = exprCast exprMulPrim
 // exprMulPrim = alfa1 exprMulPrim | epsilon   --->   exprMulPrim = ( MUL | DIV ) exprCast exprMulPrim | epsilon
 bool exprMul() {
+    printf("#exprMul: %d\n", iTk->code);
     if(exprCast()) {
         if(exprMulPrim()) {
             return true;
@@ -279,6 +296,7 @@ bool exprMul() {
 }
 
 bool exprMulPrim() {
+    printf("#exprMulPrim: %d\n", iTk->code);
     if(consume(MUL) || consume(DIV)) {
         if(exprCast()) {
             if(exprMulPrim()) {
@@ -291,6 +309,7 @@ bool exprMulPrim() {
 
 // exprCast: LPAR typeBase arrayDecl? RPAR exprCast | exprUnary
 bool exprCast() {
+    printf("#exprCast: %d\n", iTk->code);
     if(consume(LPAR)) {
         if(typeBase()) {
             if(arrayDecl()) {
@@ -316,6 +335,7 @@ bool exprCast() {
 
 // exprUnary: ( SUB | NOT ) exprUnary | exprPostfix
 bool exprUnary() {
+    printf("#exprUnary: %d\n", iTk->code);
     if(consume(SUB) || consume(NOT)) {
         if(exprUnary()) {
             return true;
@@ -336,6 +356,7 @@ bool exprUnary() {
 // exprPostfixPrim   --->   LBRACKET expr RBRACKET exprPostfixPrim | DOT ID exprPostfixPrim | epsilon
 
 bool exprPostfix() {
+    printf("#exprPostfix: %d\n", iTk->code);
     if(exprPrimary()) {
         if(exprPostfixPrim()) {
             return true;
@@ -345,6 +366,7 @@ bool exprPostfix() {
 }
 
 bool exprPostfixPrim() {
+    printf("#exprPostfixPrim: %d\n", iTk->code);
     if(consume(LBRACKET)) {
         if(expr()) {
             if(consume(RBRACKET)) {
@@ -368,6 +390,7 @@ bool exprPostfixPrim() {
 //      | INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
 //   !!!   trebuie verificata logica   !!!
 bool exprPrimary() {
+    printf("#exprPrimary %d\n", iTk->code);
     if(consume(ID)) {
         if(consume(LPAR)) {
             if(expr()) {
@@ -395,6 +418,7 @@ bool exprPrimary() {
 
 // expr: exprAssign
 bool expr() {
+    printf("#expr: %d\n", iTk->code);
     if(exprAssign()) {
         return true;
     }
@@ -407,6 +431,7 @@ bool expr() {
 //      | RETURN expr? SEMICOLON
 //      | expr? SEMICOLON
 bool stm() {
+    printf("#stm: %d\n", iTk->code);
     if(stmCompound()){
         return true;
     }
@@ -460,6 +485,7 @@ bool stm() {
 
 // stmCompound: LACC ( varDef | stm )* RACC
 bool stmCompound() {
+    printf("#stmCompound: %d\n", iTk->code);
     if(consume(LACC)) {
         for(;;){
             if(varDef()){}
@@ -477,6 +503,7 @@ bool stmCompound() {
 //               LPAR ( fnParam ( COMMA fnParam )* )? RPAR
 //               stmCompound
 bool fnDef(){
+    printf("#fnDef: %d\n", iTk->code);
     if(typeBase()) {
 
     }
@@ -511,6 +538,7 @@ bool fnDef(){
 // fiecare regula va fi implementata cu cate o functie separata(una pt structDef, una pt fnDef, etc...), care nu vor avea parametrii si vor returna un bool
 // true -> daca regula e indeplinita si false in caz contrar
 bool unit(){
+    printf("#unit: %d\n", iTk->code);
 	for(;;){
 		if(structDef()){}
 		else if(fnDef()){}
