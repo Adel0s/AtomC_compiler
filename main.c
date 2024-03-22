@@ -14,7 +14,7 @@ int main()
     showTokens(tokens);
 
     // integrare analizor sintactic
-    //parse(tokens);
+    // parse(tokens);
 
     free(input_buffer);
 

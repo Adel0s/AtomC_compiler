@@ -56,6 +56,8 @@ char *extract(const char *begin,const char *end)
     /// adaugam terminatorul de sir de caracter
     extracted_text[length] = '\0';
 
+    // printf("%s\n", extracted_text);
+
     return extracted_text;
 }
 
@@ -295,17 +297,12 @@ Token *tokenize(const char *pch)  /// pch = pointer to current char
                 {
                     for (start = pch++; *pch!='\"'; pch++) {}
 
-                    // Extract string. Example puts("abc"); -> text value = "abc
-                    char *text = extract(start, pch);
-                    text[strlen(text)]='"';
-
-                    // Add string terminator
-                    text[strlen(text)+1]='\0';
-
-                    // Set current pointer on the last character from string "text"
+                    // Extract string. Example puts("abc"); -> text value = "abc"
                     pch++;
+                    char *text = extract(start, pch);
+                    printf("%s %d\n\n", text, strlen(text));
 
-                    // We should remove " character
+                    // We should remove " characters
                     remove_quotes(text);
                     tk=addTk(STRING);
                     tk->text=text;
