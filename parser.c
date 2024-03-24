@@ -21,12 +21,136 @@ void tkerr(const char *fmt,...){
 	exit(EXIT_FAILURE);
 }
 
+char *tkCodeName(int code) {
+    switch(code) {
+        case ID:
+            return "ID";
+            break;
+        case TYPE_INT:
+            return "TYPE_INT";
+            break;
+        case TYPE_CHAR:
+            return "TYPE_CHAR";
+            break;
+        case TYPE_DOUBLE:
+            return "TYPE_DOUBLE";
+            break;
+        case ELSE:
+            return "ELSE";
+            break;
+        case IF:
+            return "IF";
+            break;
+        case RETURN:
+            return "RETURN";
+            break;
+        case STRUCT:
+            return "STRUCT";
+            break;
+        case VOID:
+            return "VOID";
+            break;
+        case WHILE:
+            return "WHILE";
+            break;
+        case COMMA:
+            return "COMMA";
+            break;
+        case SEMICOLON:
+            return "SEMICOLON";
+            break;
+        case LPAR:
+            return "LPAR";
+            break;
+        case RPAR:
+            return "RPAR";
+            break;
+        case LBRACKET:
+            return "LBRACKET";
+            break;
+        case RBRACKET:
+            return "RBRACKET";
+            break;
+        case LACC:
+            return "LACC";
+            break;
+        case RACC:
+            return "RACC";
+            break;
+        case END:
+            return "END";
+            break;
+        case ADD:
+            return "ADD";
+            break;
+        case MUL:
+            return "MUL";
+            break;
+        case DIV:
+            return "DIV";
+            break;
+        case DOT:
+            return "DOT";
+            break;
+        case AND:
+            return "AND";
+            break;
+        case OR:
+            return "OR";
+            break;
+        case NOT:
+            return "NOT";
+            break;
+        case NOTEQ:
+            return "NOTEQ";
+            break;
+        case LESS:
+            return "LESS";
+            break;
+        case LESSEQ:
+            return "LESSEQ";
+            break;
+        case GREATER:
+            return "GREATER";
+            break;
+        case GREATEREQ:
+            return "GREATEREQ";
+            break;
+        case ASSIGN:
+            return "ASSIGN";
+            break;
+        case EQUAL:
+            return "EQUAL";
+            break;
+        case SUB:
+            return "SUB";
+            break;
+        case INT:
+            return "INT";
+            break;
+        case DOUBLE:
+            return "DOUBLE";
+            break;
+        case CHAR:
+            return "CHAR";
+            break;
+        case STRING:
+            return "STRING";
+            break;
+        default:
+            return "N\\A";
+    }
+}
+
 bool consume(int code){
+    printf("consume(%s)",tkCodeName(code));
 	if(iTk->code==code){
 		consumedTk=iTk;
 		iTk=iTk->next;
+        printf(" => consumed\n");
 		return true;
 		}
+    printf(" => found %s\n",tkCodeName(iTk->code));
 	return false;
 }
 
@@ -57,22 +181,21 @@ bool typeBase(){
 // arrayDecl: LBRACKET INT? RBRACKET
 bool arrayDecl(){
     printf("#arrayDecl: %d\n", iTk->code);
+    Token *start = iTk;
     if(consume(LBRACKET)){
-        if(consume(INT)){
-            if(consume(RBRACKET)){
-                return true;
-            }else(tkerr("lipseste ] din declararea array-ului"));
-        }
+        if(consume(INT)){}
         if(consume(RBRACKET)){
             return true;
-        }else(tkerr("lipseste ] din declararea array-ului"));
-    }else(tkerr("lipseste [ din declararea array-ului"));
+        }else tkerr("lipseste ] din declararea array-ului");
+    }
+    iTk = start;
     return false;
 }
 
 // varDef: typeBase ID arrayDecl? SEMICOLON
 bool varDef(){
     printf("#varDef: %d\n", iTk->code);
+    Token *start = iTk;
     if(typeBase()){
         if(consume(ID)){
             if(arrayDecl()){
@@ -85,12 +208,14 @@ bool varDef(){
             }
         }
     }
+    iTk = start;
     return false;
 }
 
 // STRUCT ID LACC varDef* RACC SEMICOLON
 bool structDef(){
     printf("#structDef: %d\n", iTk->code);
+    Token *start = iTk;
     if(consume(STRUCT)) {
         if(consume(ID)) {
             if(consume(LACC)) {
@@ -110,12 +235,14 @@ bool structDef(){
         }
     }
 
+    iTk = start;
     return false;
 }
 
 // fnParam: typeBase ID arrayDecl?
 bool fnParam() {
     printf("#fnParam: %d\n", iTk->code);
+    Token *start = iTk;
     if(typeBase()) {
         if(consume(ID)){
             if(arrayDecl()) {
@@ -124,6 +251,7 @@ bool fnParam() {
             return true;
         }
     }
+    iTk = start;
     return false;
 }
 
@@ -539,6 +667,7 @@ bool fnDef(){
 // true -> daca regula e indeplinita si false in caz contrar
 bool unit(){
     printf("#unit: %d\n", iTk->code);
+    Token *start = iTk;
 	for(;;){
 		if(structDef()){}
 		else if(fnDef()){}
@@ -548,6 +677,7 @@ bool unit(){
 	if(consume(END)){
 		return true;
 		}
+    iTk = start;
 	return false;
 }
 
