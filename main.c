@@ -6,7 +6,7 @@
 
 int main()
 {
-    char *input_buffer=loadFile("tests/testlex.c");
+    char *input_buffer=loadFile("tests/testparser.c");
     puts(input_buffer);
 
     // va returna lista atomilor extrasi din fisierul incarcat in input_buffer
