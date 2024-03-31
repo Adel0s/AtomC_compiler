@@ -323,10 +323,11 @@ bool exprAssign() {
             if(exprAssign()){
                 return true;
             }
-            else if(exprOr()) {
-                return true;
-            }
         }
+    }
+    iTk = start; // daca prima expresie din SAU da fail
+    if(exprOr()) {
+        return true;
     }
     iTk = start;
     return false;
@@ -351,7 +352,28 @@ bool exprRelPrim() {
     printf("#exprRelPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     // merge oare asa? SAU trebuie if(consume(LESS)) else if(consume(LESSEQ) ) else if(consume(GREATER))...
-    if(consume(LESS) || consume(LESSEQ) || consume(GREATER) || consume(GREATEREQ)) {
+    if(consume(LESS)) {
+        if(exprAdd()) {
+            if(exprRelPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(LESSEQ)) {
+        if(exprAdd()) {
+            if(exprRelPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(GREATER)) {
+        if(exprAdd()) {
+            if(exprRelPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(GREATEREQ)) {
         if(exprAdd()) {
             if(exprRelPrim()) {
                 return true;
@@ -380,7 +402,14 @@ bool exprAdd() {
 bool exprAddPrim() {
     printf("#exprAddPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
-    if(consume(ADD) || consume(SUB)) {
+    if(consume(ADD)) {
+        if(exprMul()) {
+            if(exprAddPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(SUB)) {
         if(exprMul()) {
             if(exprAddPrim()) {
                 return true;
@@ -410,7 +439,14 @@ bool exprMul() {
 bool exprMulPrim() {
     printf("#exprMulPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
-    if(consume(MUL) || consume(DIV)) {
+    if(consume(MUL)) {
+        if(exprCast()) {
+            if(exprMulPrim()) {
+                return true;
+            }
+        }
+    }
+    else if(consume(DIV)) {
         if(exprCast()) {
             if(exprMulPrim()) {
                 return true;
@@ -442,7 +478,7 @@ bool exprCast() {
             }
         }
     }
-    else if(exprUnary()) {
+    if(exprUnary()) {
         return true;
     }
     iTk = start;
@@ -453,7 +489,12 @@ bool exprCast() {
 bool exprUnary() {
     printf("#exprUnary: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
-    if(consume(SUB) || consume(NOT)) {
+    if(consume(SUB)) {
+        if(exprUnary()) {
+            return true;
+        }
+    }
+    else if(consume(NOT)) {
         if(exprUnary()) {
             return true;
         }
@@ -520,19 +561,33 @@ bool exprPrimary() {
                 for(;;) {
                     if(consume(COMMA)) {
                         if(expr()) {}
+                        else break;
                     }
                     else break;
                 }
             }
-            if(consume(RPAR)) {}
-            return true;
+            if(consume(RPAR)) {
+                return true;
+            }
         }
-        else if(consume(INT) || consume(DOUBLE) || consume(CHAR) || consume(STRING)){}
-        else if(consume(LPAR)) {
-            if(expr()) {
-                if(consume(RPAR)) {
-                    return true;
-                }
+        return true;
+    }
+    if (consume(INT)) {
+        return true;
+    }
+    else if (consume(DOUBLE)) {
+        return true;
+    }
+    else if (consume(CHAR)) {
+        return true;
+    }
+    else if (consume(STRING)) {
+        return true;
+    }
+    if(consume(LPAR)) {
+        if(expr()) {
+            if(consume(RPAR)) {
+                return true;
             }
         }
     }
@@ -578,7 +633,7 @@ bool stm() {
         }
     }
     // | WHILE LPAR expr RPAR stm
-    else if(consume(WHILE)) {
+    if(consume(WHILE)) {
         if (consume(LPAR)) {
             if(expr()){
                 if(consume(RPAR)) {
@@ -590,7 +645,7 @@ bool stm() {
         }
     }
     // | RETURN expr? SEMICOLON
-    else if(consume(RETURN)) {
+    if(consume(RETURN)) {
         if(expr()){
             if(consume(SEMICOLON)){
                 return true;
@@ -599,11 +654,12 @@ bool stm() {
         if(consume(SEMICOLON)) return true;
     }
     // | expr? SEMICOLON
-    else if(expr()) {
+    if(expr()) {
         if(consume(SEMICOLON)){
             return true;
         }
     }
+    else if(consume(SEMICOLON)) return true;
 
     iTk = start;
     return false;
