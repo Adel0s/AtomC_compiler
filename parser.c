@@ -25,118 +25,80 @@ char *tkCodeName(int code) {
     switch(code) {
         case ID:
             return "ID";
-            break;
         case TYPE_INT:
             return "TYPE_INT";
-            break;
         case TYPE_CHAR:
             return "TYPE_CHAR";
-            break;
         case TYPE_DOUBLE:
             return "TYPE_DOUBLE";
-            break;
         case ELSE:
             return "ELSE";
-            break;
         case IF:
             return "IF";
-            break;
         case RETURN:
             return "RETURN";
-            break;
         case STRUCT:
             return "STRUCT";
-            break;
         case VOID:
             return "VOID";
-            break;
         case WHILE:
             return "WHILE";
-            break;
         case COMMA:
             return "COMMA";
-            break;
         case SEMICOLON:
             return "SEMICOLON";
-            break;
         case LPAR:
             return "LPAR";
-            break;
         case RPAR:
             return "RPAR";
-            break;
         case LBRACKET:
             return "LBRACKET";
-            break;
         case RBRACKET:
             return "RBRACKET";
-            break;
         case LACC:
             return "LACC";
-            break;
         case RACC:
             return "RACC";
-            break;
         case END:
             return "END";
-            break;
         case ADD:
             return "ADD";
-            break;
         case MUL:
             return "MUL";
-            break;
         case DIV:
             return "DIV";
-            break;
         case DOT:
             return "DOT";
-            break;
         case AND:
             return "AND";
-            break;
         case OR:
             return "OR";
-            break;
         case NOT:
             return "NOT";
-            break;
         case NOTEQ:
             return "NOTEQ";
-            break;
         case LESS:
             return "LESS";
-            break;
         case LESSEQ:
             return "LESSEQ";
-            break;
         case GREATER:
             return "GREATER";
-            break;
         case GREATEREQ:
             return "GREATEREQ";
-            break;
         case ASSIGN:
             return "ASSIGN";
-            break;
         case EQUAL:
             return "EQUAL";
-            break;
         case SUB:
             return "SUB";
-            break;
         case INT:
             return "INT";
-            break;
         case DOUBLE:
             return "DOUBLE";
-            break;
         case CHAR:
             return "CHAR";
-            break;
         case STRING:
             return "STRING";
-            break;
         default:
             return "N\\A";
     }
@@ -201,12 +163,12 @@ bool varDef(){
             if(arrayDecl()){
                 if(consume(SEMICOLON)){
                     return true;
-                }
+                }else tkerr("Lipseste ; din declararea variabilei");
             }
             if(consume(SEMICOLON)){
                 return true;
-            }
-        }
+            }else tkerr("Lipseste ; din declararea variabilei");
+        }else tkerr("Lipseste identificatorul din declararea variabilei");
     }
     iTk = start;
     return false;
@@ -221,16 +183,14 @@ bool structDef(){
             if(consume(LACC)) {
                 for(;;) {
                     if(varDef()) {
-                        if(consume(RACC)) {
-                            if(consume(SEMICOLON)) {
-                                return true;
-                            }
-                        }
                     }
-                    else {
-                        break;
-                    }
+                    else break;
                 }
+                if(consume(RACC)) {
+                    if(consume(SEMICOLON)) {
+                        return true;
+                    }else tkerr("Lipseste ; dupa definirea structurii");
+                }else tkerr("Lipseste } din definirea structurii");
             }
         }
     }
@@ -673,26 +633,40 @@ bool stmCompound() {
 bool fnDef(){
     printf("#fnDef: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
-    if(typeBase()) {
-
-    }
-    else if(consume(VOID)) {
-
-    }
-    if(consume(ID)) {
-        if(consume(LPAR)) {
-            if(fnParam()){
-                for(;;) {
-                    if(consume(COMMA)) {
-                        if(fnParam()) {
-
-                        }
-                    }else break;
+    if (consume(VOID)) {
+        if (consume(ID)) {
+            if (consume(LPAR)) {
+                if (fnParam()) {
+                    for (;;) {
+                        if (consume(COMMA)) {
+                            if (fnParam()) {
+                            } else break;
+                        } else break;
+                    }
+                }
+                if (consume(RPAR)) {
+                    if (stmCompound()) {
+                        return true;
+                    }
                 }
             }
-            if(consume(RPAR)) {
-                if(stmCompound()) {
-                    return true;
+        }
+    }
+    else if (typeBase()) {
+        if (consume(ID)) {
+            if (consume(LPAR)) {
+                if (fnParam()) {
+                    for (;;) {
+                        if (consume(COMMA)) {
+                            if (fnParam()) {
+                            } else break;
+                        } else break;
+                    }
+                }
+                if (consume(RPAR)) {
+                    if (stmCompound()) {
+                        return true;
+                    }
                 }
             }
         }
