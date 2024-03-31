@@ -209,7 +209,7 @@ bool fnParam() {
                 return true;
             }
             return true;
-        }
+        } else tkerr("Lipseste identificatorul in parametrul functiei");
     }
     iTk = start;
     return false;
@@ -229,7 +229,7 @@ bool exprOrPrim() {
             if(exprOrPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul ||");
     }
     iTk = start;
     return true; // epsilon
@@ -271,7 +271,7 @@ bool exprAndPrim() {
             if(exprAndPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul &&");
     }
     iTk = start;
     return true; //epsilon
@@ -301,14 +301,14 @@ bool exprEqPrim() {
             if(exprEqPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul ==");
     }
     else if(consume(NOTEQ)) {
         if(exprRel()) {
             if(exprEqPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul !=");
     }
     iTk = start;
     return true; //epsilon
@@ -322,7 +322,7 @@ bool exprAssign() {
         if(consume(ASSIGN)) {
             if(exprAssign()){
                 return true;
-            }
+            } else tkerr("Lipseste expresia dupa operatorul =");
         }
     }
     iTk = start; // daca prima expresie din SAU da fail
@@ -357,28 +357,28 @@ bool exprRelPrim() {
             if(exprRelPrim()) {
                 return true;
             }
-        }
+        }  else tkerr("Lipseste expresia dupa operatorul <");
     }
     else if(consume(LESSEQ)) {
         if(exprAdd()) {
             if(exprRelPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul <=");
     }
     else if(consume(GREATER)) {
         if(exprAdd()) {
             if(exprRelPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul >");
     }
     else if(consume(GREATEREQ)) {
         if(exprAdd()) {
             if(exprRelPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul >=");
     }
     iTk = start;
     return true; // epsilon
@@ -407,14 +407,14 @@ bool exprAddPrim() {
             if(exprAddPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul +");
     }
     else if(consume(SUB)) {
         if(exprMul()) {
             if(exprAddPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul -");
     }
     iTk = start;
     return true; // epsilon
@@ -444,14 +444,14 @@ bool exprMulPrim() {
             if(exprMulPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul *");
     }
     else if(consume(DIV)) {
         if(exprCast()) {
             if(exprMulPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste expresia dupa operatorul /");
     }
     iTk = start;
     return true; // epsilon
@@ -468,7 +468,7 @@ bool exprCast() {
                     if(exprCast()) {
                         return true;
                     }
-                }
+                } else tkerr("Lipseste ) in expresia de cast");
             }
             // arrayDecl? - tratare caz optionalitate
             if(consume(RPAR)) {
@@ -476,7 +476,7 @@ bool exprCast() {
                     return true;
                 }
             }
-        }
+        } else tkerr("Lipseste sau este gresit tipul din expresia de cast");
     }
     if(exprUnary()) {
         return true;
@@ -492,12 +492,12 @@ bool exprUnary() {
     if(consume(SUB)) {
         if(exprUnary()) {
             return true;
-        }
+        } else tkerr("Lipseste expresia dupa operatorul -");
     }
     else if(consume(NOT)) {
         if(exprUnary()) {
             return true;
-        }
+        } else tkerr("Lipseste expresia dupa operatorul !");
     }
     if(exprPostfix()) {
         return true;
@@ -535,15 +535,15 @@ bool exprPostfixPrim() {
                 if(exprPostfixPrim()) {
                     return true;
                 }
-            }
-        }
+            } else tkerr("Lipseste ] din accesarea vectorului");
+        } else tkerr("Lipseste expresia din accesarea vectorului");
     }
     if(consume(DOT)) {
         if(consume(ID)) {
             if(exprPostfixPrim()) {
                 return true;
             }
-        }
+        } else tkerr("Lipseste identificatorul dupa operatorul .");
     }
     iTk = start;
     return true;
@@ -560,15 +560,19 @@ bool exprPrimary() {
             if(expr()) {
                 for(;;) {
                     if(consume(COMMA)) {
-                        if(expr()) {}
-                        else break;
+                        if(expr()) {
+
+                        } else {
+                            tkerr("Lipseste expresia dupa , in apelul functiei");
+                            break;
+                        }
                     }
                     else break;
                 }
             }
             if(consume(RPAR)) {
                 return true;
-            }
+            } else tkerr("Lipseste ) in apelul functiei");
         }
         return true;
     }
@@ -588,7 +592,7 @@ bool exprPrimary() {
         if(expr()) {
             if(consume(RPAR)) {
                 return true;
-            }
+            } else tkerr("Lipseste ) in apelul functiei");
         }
     }
     iTk = start;
@@ -624,13 +628,13 @@ bool stm() {
                         if(consume(ELSE)) {
                             if(stm()){
                                 return true;
-                            }
+                            } else tkerr("Lipseste statement dupa conditia else");
                         }
                         return true;
-                    }
-                }
-            }
-        }
+                    } else tkerr("Lipseste statement dupa conditia if");
+                } else tkerr("Lipseste ) in if");
+            } else tkerr("Lipseste expresia in if");
+        } else tkerr("Lipseste ( in if");
     }
     // | WHILE LPAR expr RPAR stm
     if(consume(WHILE)) {
@@ -639,17 +643,17 @@ bool stm() {
                 if(consume(RPAR)) {
                     if(stm()) {
                         return true;
-                    }
-                }
-            }
-        }
+                    } else tkerr("Lipseste statement in while");
+                }else tkerr("Lipseste ) in while");
+            } else tkerr("Lipseste expresia in while");
+        } else tkerr("Lipseste ( in while");
     }
     // | RETURN expr? SEMICOLON
     if(consume(RETURN)) {
         if(expr()){
             if(consume(SEMICOLON)){
                 return true;
-            }
+            } else tkerr("Lipseste ; in return");
         }
         if(consume(SEMICOLON)) return true;
     }
@@ -657,7 +661,7 @@ bool stm() {
     if(expr()) {
         if(consume(SEMICOLON)){
             return true;
-        }
+        } else tkerr("Lipseste ; in expresie");
     }
     else if(consume(SEMICOLON)) return true;
 
@@ -677,7 +681,7 @@ bool stmCompound() {
         }
         if(consume(RACC)){
             return true;
-        }
+        } else tkerr("Lipseste } in compound statement");
     }
     iTk = start;
     return false;
@@ -696,7 +700,10 @@ bool fnDef(){
                     for (;;) {
                         if (consume(COMMA)) {
                             if (fnParam()) {
-                            } else break;
+                            } else {
+                                tkerr("Lipseste parametrul dupa , in definirea functiei");
+                                break;
+                            }
                         } else break;
                     }
                 }
@@ -705,8 +712,8 @@ bool fnDef(){
                         return true;
                     }
                 }
-            }
-        }
+            } else tkerr("Lipseste ( in definirea functiei");
+        } else tkerr("Lipseste identificatorul in definirea functiei");
     }
     else if (typeBase()) {
         if (consume(ID)) {
@@ -715,7 +722,10 @@ bool fnDef(){
                     for (;;) {
                         if (consume(COMMA)) {
                             if (fnParam()) {
-                            } else break;
+                            } else {
+                                tkerr("Lipseste parametrul dupa , in definirea functiei");
+                                break;
+                            }
                         } else break;
                     }
                 }
@@ -725,7 +735,7 @@ bool fnDef(){
                     }
                 }
             }
-        }
+        } else tkerr("Lipseste identificatorul in definirea functiei");
     }
     iTk = start;
     return false;

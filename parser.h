@@ -4,7 +4,7 @@
 #include "lexer.h"
 
 bool unit();
-bool strucDef();
+bool structDef();
 bool fnDef();
 bool varDef();
 bool typeBase();
