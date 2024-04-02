@@ -11,4 +11,6 @@ add_executable(AtomC_copy main.c
         parser.c
         parser.h
         ad.c
-        ad.h)
+        ad.h
+        vm.c
+        vm.h)
