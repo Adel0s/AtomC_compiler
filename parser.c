@@ -478,6 +478,7 @@ bool exprCast() {
             }
         } else tkerr("Lipseste sau este gresit tipul din expresia de cast");
     }
+    iTk = start; // daca prima expresie din SAU da fail
     if(exprUnary()) {
         return true;
     }
@@ -499,6 +500,7 @@ bool exprUnary() {
             return true;
         } else tkerr("Lipseste expresia dupa operatorul !");
     }
+    iTk = start; // daca prima expresie din SAU da fail
     if(exprPostfix()) {
         return true;
     }
@@ -551,7 +553,6 @@ bool exprPostfixPrim() {
 
 // exprPrimary: ID ( LPAR ( expr ( COMMA expr )* )? RPAR )?
 //      | INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
-//   !!!   trebuie verificata logica   !!!
 bool exprPrimary() {
     printf("#exprPrimary %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
@@ -733,7 +734,7 @@ bool fnDef(){
                     if (stmCompound()) {
                         return true;
                     }
-                }
+                }else tkerr("Lipseste ) in definirea functiei");
             }
         } else tkerr("Lipseste identificatorul in definirea functiei");
     }
