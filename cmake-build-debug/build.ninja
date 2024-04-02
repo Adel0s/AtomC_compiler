@@ -73,6 +73,12 @@ build CMakeFiles/AtomC_copy.dir/parser.c.obj: C_COMPILER__AtomC_copy_unscanned_D
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
   OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
 
+build CMakeFiles/AtomC_copy.dir/ad.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/ad.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\ad.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target AtomC_copy
@@ -81,7 +87,7 @@ build CMakeFiles/AtomC_copy.dir/parser.c.obj: C_COMPILER__AtomC_copy_unscanned_D
 #############################################
 # Link the executable AtomC_copy.exe
 
-build AtomC_copy.exe: C_EXECUTABLE_LINKER__AtomC_copy_Debug CMakeFiles/AtomC_copy.dir/main.c.obj CMakeFiles/AtomC_copy.dir/lexer.c.obj CMakeFiles/AtomC_copy.dir/utils.c.obj CMakeFiles/AtomC_copy.dir/parser.c.obj
+build AtomC_copy.exe: C_EXECUTABLE_LINKER__AtomC_copy_Debug CMakeFiles/AtomC_copy.dir/main.c.obj CMakeFiles/AtomC_copy.dir/lexer.c.obj CMakeFiles/AtomC_copy.dir/utils.c.obj CMakeFiles/AtomC_copy.dir/parser.c.obj CMakeFiles/AtomC_copy.dir/ad.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir

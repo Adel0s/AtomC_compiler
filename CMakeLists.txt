@@ -9,4 +9,6 @@ add_executable(AtomC_copy main.c
         utils.c
         utils.h
         parser.c
-        parser.h)
+        parser.h
+        ad.c
+        ad.h)
