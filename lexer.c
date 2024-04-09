@@ -31,6 +31,89 @@ Token *addTk(int code)
     return tk;
 }
 
+char *tkCodeName(int code) {
+    switch(code) {
+        case ID:
+            return "ID";
+        case TYPE_INT:
+            return "TYPE_INT";
+        case TYPE_CHAR:
+            return "TYPE_CHAR";
+        case TYPE_DOUBLE:
+            return "TYPE_DOUBLE";
+        case ELSE:
+            return "ELSE";
+        case IF:
+            return "IF";
+        case RETURN:
+            return "RETURN";
+        case STRUCT:
+            return "STRUCT";
+        case VOID:
+            return "VOID";
+        case WHILE:
+            return "WHILE";
+        case COMMA:
+            return "COMMA";
+        case SEMICOLON:
+            return "SEMICOLON";
+        case LPAR:
+            return "LPAR";
+        case RPAR:
+            return "RPAR";
+        case LBRACKET:
+            return "LBRACKET";
+        case RBRACKET:
+            return "RBRACKET";
+        case LACC:
+            return "LACC";
+        case RACC:
+            return "RACC";
+        case END:
+            return "END";
+        case ADD:
+            return "ADD";
+        case MUL:
+            return "MUL";
+        case DIV:
+            return "DIV";
+        case DOT:
+            return "DOT";
+        case AND:
+            return "AND";
+        case OR:
+            return "OR";
+        case NOT:
+            return "NOT";
+        case NOTEQ:
+            return "NOTEQ";
+        case LESS:
+            return "LESS";
+        case LESSEQ:
+            return "LESSEQ";
+        case GREATER:
+            return "GREATER";
+        case GREATEREQ:
+            return "GREATEREQ";
+        case ASSIGN:
+            return "ASSIGN";
+        case EQUAL:
+            return "EQUAL";
+        case SUB:
+            return "SUB";
+        case INT:
+            return "INT";
+        case DOUBLE:
+            return "DOUBLE";
+        case CHAR:
+            return "CHAR";
+        case STRING:
+            return "STRING";
+        default:
+            return "N\\A";
+    }
+}
+
 ///de completat
 /// primeste 2 pointeri si extrage intr-o zona alocata dinamic subsirul dintre cei doi pointeri [begin, end)
 char *extract(const char *begin,const char *end)

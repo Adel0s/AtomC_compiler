@@ -4,6 +4,9 @@
 #include <stdbool.h>
 
 #include "parser.h"
+#include "lexer.h"
+
+#define DEBUG 0
 
 Token *iTk;		// the iterator in the tokens list
 Token *consumedTk;		// the last consumed token
@@ -21,98 +24,27 @@ void tkerr(const char *fmt,...){
 	exit(EXIT_FAILURE);
 }
 
-char *tkCodeName(int code) {
-    switch(code) {
-        case ID:
-            return "ID";
-        case TYPE_INT:
-            return "TYPE_INT";
-        case TYPE_CHAR:
-            return "TYPE_CHAR";
-        case TYPE_DOUBLE:
-            return "TYPE_DOUBLE";
-        case ELSE:
-            return "ELSE";
-        case IF:
-            return "IF";
-        case RETURN:
-            return "RETURN";
-        case STRUCT:
-            return "STRUCT";
-        case VOID:
-            return "VOID";
-        case WHILE:
-            return "WHILE";
-        case COMMA:
-            return "COMMA";
-        case SEMICOLON:
-            return "SEMICOLON";
-        case LPAR:
-            return "LPAR";
-        case RPAR:
-            return "RPAR";
-        case LBRACKET:
-            return "LBRACKET";
-        case RBRACKET:
-            return "RBRACKET";
-        case LACC:
-            return "LACC";
-        case RACC:
-            return "RACC";
-        case END:
-            return "END";
-        case ADD:
-            return "ADD";
-        case MUL:
-            return "MUL";
-        case DIV:
-            return "DIV";
-        case DOT:
-            return "DOT";
-        case AND:
-            return "AND";
-        case OR:
-            return "OR";
-        case NOT:
-            return "NOT";
-        case NOTEQ:
-            return "NOTEQ";
-        case LESS:
-            return "LESS";
-        case LESSEQ:
-            return "LESSEQ";
-        case GREATER:
-            return "GREATER";
-        case GREATEREQ:
-            return "GREATEREQ";
-        case ASSIGN:
-            return "ASSIGN";
-        case EQUAL:
-            return "EQUAL";
-        case SUB:
-            return "SUB";
-        case INT:
-            return "INT";
-        case DOUBLE:
-            return "DOUBLE";
-        case CHAR:
-            return "CHAR";
-        case STRING:
-            return "STRING";
-        default:
-            return "N\\A";
+void tkDebug(const char *fmt,...){
+    if(!DEBUG) {
+        return;
     }
+    fprintf(stdout,"%d: ",iTk->line);
+    va_list va;
+    va_start(va,fmt);
+    vfprintf(stdout,fmt,va);
+    va_end(va);
+    fprintf(stdout,"\n");
 }
 
 bool consume(int code){
-    printf("consume(%s)",tkCodeName(code));
+    tkDebug("consume(%s)",tkCodeName(code));
 	if(iTk->code==code){
 		consumedTk=iTk;
 		iTk=iTk->next;
-        printf(" => consumed\n");
+        tkDebug(" => consumed\n");
 		return true;
 		}
-    printf(" => found %s\n",tkCodeName(iTk->code));
+    tkDebug(" => found %s\n",tkCodeName(iTk->code));
 	return false;
 }
 
@@ -120,7 +52,7 @@ bool consume(int code){
 // ATENTIE: totul sau nimic(daca functia consuma toata regula atunci va returna true)
 // nu avem voie ca o functie sa cosume doar o parte din atomi
 bool typeBase(){
-    printf("#typeBase: %s\n", tkCodeName(iTk->code));
+    tkDebug("#typeBase: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
 	if(consume(TYPE_INT)){
 		return true;
@@ -142,7 +74,7 @@ bool typeBase(){
 
 // arrayDecl: LBRACKET INT? RBRACKET
 bool arrayDecl(){
-    printf("%d #arrayDecl: %s\n", iTk->line, tkCodeName(iTk->code));
+    tkDebug("%d #arrayDecl: %s\n", iTk->line, tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LBRACKET)){
         if(consume(INT)){}
@@ -156,7 +88,7 @@ bool arrayDecl(){
 
 // varDef: typeBase ID arrayDecl? SEMICOLON
 bool varDef(){
-    printf("#varDef: %s\n", tkCodeName(iTk->code));
+    tkDebug("#varDef: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(typeBase()){
         if(consume(ID)){
@@ -176,7 +108,7 @@ bool varDef(){
 
 // STRUCT ID LACC varDef* RACC SEMICOLON
 bool structDef(){
-    printf("#structDef: %s\n", tkCodeName(iTk->code));
+    tkDebug("#structDef: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(STRUCT)) {
         if(consume(ID)) {
@@ -201,7 +133,7 @@ bool structDef(){
 
 // fnParam: typeBase ID arrayDecl?
 bool fnParam() {
-    printf("#fnParam: %s\n", tkCodeName(iTk->code));
+    tkDebug("#fnParam: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(typeBase()) {
         if(consume(ID)){
@@ -222,7 +154,7 @@ bool fnParam() {
 // exprOrPrim: OR exprAnd exprOrPrim | epsilon
 
 bool exprOrPrim() {
-    printf("#exprOrPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprOrPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(OR)) {
         if(exprAnd()) {
@@ -236,7 +168,7 @@ bool exprOrPrim() {
 }
 
 bool exprOr() {
-    printf("#exprOr: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprOr: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprAnd()) {
         if(exprOrPrim()) {
@@ -252,7 +184,7 @@ bool exprOr() {
 //exprAnd' -> AND exprEq exprAnd' | epsilon
 
 bool exprAnd() {
-    printf("#exprAnd: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprAnd: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprEq()) {
         if(exprAndPrim()) {
@@ -264,7 +196,7 @@ bool exprAnd() {
 }
 
 bool exprAndPrim() {
-    printf("#exprAndPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprAndPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(AND)) {
         if(exprEq()) {
@@ -282,7 +214,7 @@ bool exprAndPrim() {
 // exprEq = exprRel exprEqPrim
 // exprEqPrim = ( EQUAL | NOTEQ ) exprRel exprEqPrim | epsilon
 bool exprEq() {
-    printf("#exprEq: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprEq: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprRel()) {
         if(exprEqPrim()) {
@@ -294,7 +226,7 @@ bool exprEq() {
 }
 
 bool exprEqPrim() {
-    printf("#exprEqPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprEqPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(EQUAL)) {
         if(exprRel()) {
@@ -316,7 +248,7 @@ bool exprEqPrim() {
 
 // exprAssign: exprUnary ASSIGN exprAssign | exprOr
 bool exprAssign() {
-    printf("#exprAssign: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprAssign: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprUnary()) {
         if(consume(ASSIGN)) {
@@ -337,7 +269,7 @@ bool exprAssign() {
 // exprRel: exprAdd exprRelPrim
 // exprRelPrim: (LESS | LESSEQ | GREATER | GREATEREQ) exprAdd exprRelPrim | epsilon
 bool exprRel() {
-    printf("#exprRel: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprRel: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprAdd()) {
         if(exprRelPrim()) {
@@ -349,7 +281,7 @@ bool exprRel() {
 }
 
 bool exprRelPrim() {
-    printf("#exprRelPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprRelPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     // merge oare asa? SAU trebuie if(consume(LESS)) else if(consume(LESSEQ) ) else if(consume(GREATER))...
     if(consume(LESS)) {
@@ -388,7 +320,7 @@ bool exprRelPrim() {
 // exprAdd: exprMul exprAddPrim
 // exprAddPrim: (ADD | SUB) exprMul exprAddPrim | epsilon
 bool exprAdd() {
-    printf("#exprAdd: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprAdd: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprMul()) {
         if(exprAddPrim()) {
@@ -400,7 +332,7 @@ bool exprAdd() {
 }
 
 bool exprAddPrim() {
-    printf("#exprAddPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprAddPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(ADD)) {
         if(exprMul()) {
@@ -425,7 +357,7 @@ bool exprAddPrim() {
 // exprMul = beta1 exprMulPrim   --->   exprMul = exprCast exprMulPrim
 // exprMulPrim = alfa1 exprMulPrim | epsilon   --->   exprMulPrim = ( MUL | DIV ) exprCast exprMulPrim | epsilon
 bool exprMul() {
-    printf("#exprMul: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprMul: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprCast()) {
         if(exprMulPrim()) {
@@ -437,7 +369,7 @@ bool exprMul() {
 }
 
 bool exprMulPrim() {
-    printf("#exprMulPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprMulPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(MUL)) {
         if(exprCast()) {
@@ -459,7 +391,7 @@ bool exprMulPrim() {
 
 // exprCast: LPAR typeBase arrayDecl? RPAR exprCast | exprUnary
 bool exprCast() {
-    printf("#exprCast: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprCast: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LPAR)) {
         if(typeBase()) {
@@ -488,7 +420,7 @@ bool exprCast() {
 
 // exprUnary: ( SUB | NOT ) exprUnary | exprPostfix
 bool exprUnary() {
-    printf("#exprUnary: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprUnary: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(SUB)) {
         if(exprUnary()) {
@@ -517,7 +449,7 @@ bool exprUnary() {
 // exprPostfixPrim   --->   LBRACKET expr RBRACKET exprPostfixPrim | DOT ID exprPostfixPrim | epsilon
 
 bool exprPostfix() {
-    printf("#exprPostfix: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprPostfix: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(exprPrimary()) {
         if(exprPostfixPrim()) {
@@ -529,7 +461,7 @@ bool exprPostfix() {
 }
 
 bool exprPostfixPrim() {
-    printf("#exprPostfixPrim: %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprPostfixPrim: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LBRACKET)) {
         if(expr()) {
@@ -554,7 +486,7 @@ bool exprPostfixPrim() {
 // exprPrimary: ID ( LPAR ( expr ( COMMA expr )* )? RPAR )?
 //      | INT | DOUBLE | CHAR | STRING | LPAR expr RPAR
 bool exprPrimary() {
-    printf("#exprPrimary %s\n", tkCodeName(iTk->code));
+    tkDebug("#exprPrimary %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(ID)) {
         if(consume(LPAR)) {
@@ -602,7 +534,7 @@ bool exprPrimary() {
 
 // expr: exprAssign
 bool expr() {
-    printf("#expr: %s\n", tkCodeName(iTk->code));
+    tkDebug("#expr: %s\n", tkCodeName(iTk->code));
     if(exprAssign()) {
         return true;
     }
@@ -615,7 +547,7 @@ bool expr() {
 //      | RETURN expr? SEMICOLON
 //      | expr? SEMICOLON
 bool stm() {
-    printf("#stm: %s\n", tkCodeName(iTk->code));
+    tkDebug("#stm: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(stmCompound()){
         return true;
@@ -672,7 +604,7 @@ bool stm() {
 
 // stmCompound: LACC ( varDef | stm )* RACC
 bool stmCompound() {
-    printf("#stmCompound: %s\n", tkCodeName(iTk->code));
+    tkDebug("#stmCompound: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LACC)) {
         for(;;){
@@ -692,7 +624,7 @@ bool stmCompound() {
 //               LPAR ( fnParam ( COMMA fnParam )* )? RPAR
 //               stmCompound
 bool fnDef(){
-    printf("#fnDef: %s\n", tkCodeName(iTk->code));
+    tkDebug("#fnDef: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if (consume(VOID)) {
         if (consume(ID)) {
@@ -705,7 +637,9 @@ bool fnDef(){
                                 tkerr("Lipseste parametrul dupa , in definirea functiei");
                                 break;
                             }
-                        } else break;
+                        } else {
+                            break;
+                        }
                     }
                 }
                 if (consume(RPAR)) {
@@ -748,7 +682,7 @@ bool fnDef(){
 // fiecare regula va fi implementata cu cate o functie separata(una pt structDef, una pt fnDef, etc...), care nu vor avea parametrii si vor returna un bool
 // true -> daca regula e indeplinita si false in caz contrar
 bool unit(){
-    printf("#unit: %s\n", tkCodeName(iTk->code));
+    tkDebug("#unit: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
 	for(;;){
 		if(structDef()){}

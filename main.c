@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "lexer.h"
 #include "parser.h"
+#include "ad.h"
 
 int main()
 {
@@ -13,10 +14,19 @@ int main()
     Token *tokens = tokenize(input_buffer);
     showTokens(tokens);
 
+    // integrare analizor de domeniu
+    // pushDomain();
+
     // integrare analizor sintactic
     parse(tokens);
 
+    // afisare domeniu
+    // showDomain(symTable, "global");
+    // dropDomain();
+
     free(input_buffer);
+
+
 
     return 0;
 }

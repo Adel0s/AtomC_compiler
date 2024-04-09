@@ -34,5 +34,6 @@ typedef struct Token{
 
 Token *tokenize(const char *pch);
 void showTokens(const Token *tokens);
+char *tkCodeName(int code);
 
 #endif //ATOMC_COPY_LEXER_H
