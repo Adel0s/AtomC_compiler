@@ -11,18 +11,19 @@ int main()
     puts(input_buffer);
 
     // va returna lista atomilor extrasi din fisierul incarcat in input_buffer
+    // integrare analizor lexical
     Token *tokens = tokenize(input_buffer);
-    showTokens(tokens);
+    showTokens(tokens); // afisare atomi lexicali (sfarsitul analizei lexicale)
 
     // integrare analizor de domeniu
-    // pushDomain();
+    pushDomain(); // creaza domeniul global in tabela de simboluri
 
     // integrare analizor sintactic
     parse(tokens);
 
     // afisare domeniu
-    // showDomain(symTable, "global");
-    // dropDomain();
+    showDomain(symTable,"global"); // afisare domeniu global
+    dropDomain(); // sterge domeniul global
 
     free(input_buffer);
 

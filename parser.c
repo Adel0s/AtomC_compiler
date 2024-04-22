@@ -5,11 +5,14 @@
 
 #include "parser.h"
 #include "lexer.h"
+#include "ad.h"
+#include "utils.h"
 
 #define DEBUG 0
 
 Token *iTk;		// the iterator in the tokens list
 Token *consumedTk;		// the last consumed token
+Symbol *owner = NULL; // the current owner of the symbols
 
 // afiseaza error in line... : textul de eroare si la sfarsit iese din program
 // mesaj de eroare cat mai specific: specificam ce lipseste si de unde lipseste. Ex: lipsa paranteza DESCHISA dupa IF
@@ -51,20 +54,28 @@ bool consume(int code){
 // typeBase: TYPE_INT | TYPE_DOUBLE | TYPE_CHAR | STRUCT ID
 // ATENTIE: totul sau nimic(daca functia consuma toata regula atunci va returna true)
 // nu avem voie ca o functie sa cosume doar o parte din atomi
-bool typeBase(){
+bool typeBase(Type *t){
     tkDebug("#typeBase: %s\n", tkCodeName(iTk->code));
+    t->n=-1;
     Token *start = iTk;
 	if(consume(TYPE_INT)){
+        t->tb=TB_INT;
 		return true;
 		}
 	if(consume(TYPE_DOUBLE)){
+        t->tb=TB_DOUBLE;
 		return true;
 		}
 	if(consume(TYPE_CHAR)){
+        t->tb=TB_CHAR;
 		return true;
 		}
 	if(consume(STRUCT)){
 		if(consume(ID)){
+            Token *tkName = consumedTk;
+            t->tb=TB_STRUCT;
+            t->s=findSymbol(tkName->text);
+            if(!t->s)tkerr("structura nedefinita: %s",tkName->text);
 			return true;
 			}else tkerr("lipseste numele structurii!");
 		}
@@ -73,11 +84,16 @@ bool typeBase(){
 }
 
 // arrayDecl: LBRACKET INT? RBRACKET
-bool arrayDecl(){
+bool arrayDecl(Type *t){
     tkDebug("%d #arrayDecl: %s\n", iTk->line, tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LBRACKET)){
-        if(consume(INT)){}
+        if(consume(INT)){
+            Token *tkSize = consumedTk;
+            t->n = tkSize->i;
+        } else {
+            t->n = 0; // array-ul nu are specificata dimensiunea
+        }
         if(consume(RBRACKET)){
             return true;
         }else tkerr("lipseste ] din declararea array-ului");
@@ -89,15 +105,61 @@ bool arrayDecl(){
 // varDef: typeBase ID arrayDecl? SEMICOLON
 bool varDef(){
     tkDebug("#varDef: %s\n", tkCodeName(iTk->code));
+    Type t;
     Token *start = iTk;
-    if(typeBase()){
+    if(typeBase(&t)){
         if(consume(ID)){
-            if(arrayDecl()){
+            Token *tkName = consumedTk;
+            if(arrayDecl(&t)){
+                if(t.n == 0) tkerr("a vector variable must have a specified dimension");
                 if(consume(SEMICOLON)){
+                    Symbol *var = findSymbolInDomain(symTable,tkName->text);
+                    if(var)
+                        tkerr("symbol redefinition: %s",tkName->text);
+                    var = newSymbol(tkName->text,SK_VAR);
+                    var->type = t;
+                    var->owner = owner;
+                    addSymbolToDomain(symTable,var);
+                    if(owner){
+                        switch(owner->kind){
+                            case SK_FN:
+                                var->varIdx = symbolsLen(owner->fn.locals);
+                                addSymbolToList(&owner->fn.locals,dupSymbol(var));
+                                break;
+                            case SK_STRUCT:
+                                var->varIdx = typeSize(&owner->type);
+                                addSymbolToList(&owner->structMembers,dupSymbol(var));
+                                break;
+                        }
+                    }else{
+                        var->varMem = safeAlloc(typeSize(&t));
+                    }
                     return true;
                 }else tkerr("Lipseste ; din declararea variabilei");
             }
+
             if(consume(SEMICOLON)){
+                Symbol *var = findSymbolInDomain(symTable,tkName->text);
+                if(var)
+                    tkerr("symbol redefinition: %s",tkName->text);
+                var = newSymbol(tkName->text,SK_VAR);
+                var->type = t;
+                var->owner = owner;
+                addSymbolToDomain(symTable,var);
+                if(owner){
+                    switch(owner->kind){
+                        case SK_FN:
+                            var->varIdx = symbolsLen(owner->fn.locals);
+                            addSymbolToList(&owner->fn.locals,dupSymbol(var));
+                            break;
+                        case SK_STRUCT:
+                            var->varIdx = typeSize(&owner->type);
+                            addSymbolToList(&owner->structMembers,dupSymbol(var));
+                            break;
+                    }
+                }else{
+                    var->varMem = safeAlloc(typeSize(&t));
+                }
                 return true;
             }else tkerr("Lipseste ; din declararea variabilei");
         }else tkerr("Lipseste identificatorul din declararea variabilei");
@@ -112,7 +174,17 @@ bool structDef(){
     Token *start = iTk;
     if(consume(STRUCT)) {
         if(consume(ID)) {
+            Token *tkName = consumedTk;
             if(consume(LACC)) {
+                Symbol *s = findSymbolInDomain(symTable,tkName->text);
+                if(s)
+                    tkerr("symbol redefinition: %s",tkName->text);
+                s=addSymbolToDomain(symTable,newSymbol(tkName->text,SK_STRUCT));
+                s->type.tb = TB_STRUCT;
+                s->type.s = s;
+                s->type.n = -1;
+                pushDomain();
+                owner = s;
                 for(;;) {
                     if(varDef()) {
                     }
@@ -120,6 +192,8 @@ bool structDef(){
                 }
                 if(consume(RACC)) {
                     if(consume(SEMICOLON)) {
+                        owner = NULL;
+                        dropDomain();
                         return true;
                     }else tkerr("Lipseste ; dupa definirea structurii");
                 }else tkerr("Lipseste } din definirea structurii");
@@ -134,12 +208,25 @@ bool structDef(){
 // fnParam: typeBase ID arrayDecl?
 bool fnParam() {
     tkDebug("#fnParam: %s\n", tkCodeName(iTk->code));
+    Type t;
     Token *start = iTk;
-    if(typeBase()) {
+    if(typeBase(&t)) {
         if(consume(ID)){
-            if(arrayDecl()) {
+            Token *tkName = consumedTk;
+            if(arrayDecl(&t)) {
+                t.n = 0;
                 return true;
             }
+            Symbol *param = findSymbolInDomain(symTable,tkName->text);
+            if(param)
+                tkerr("symbol redefinition: %s",tkName->text);
+            param=newSymbol(tkName->text,SK_PARAM);
+            param->type = t;
+            param->owner = owner;
+            param->paramIdx = symbolsLen(owner->fn.params);
+            // parametrul este adaugat atat la domeniul curent, cat si la parametrii fn
+            addSymbolToDomain(symTable,param);
+            addSymbolToList(&owner->fn.params,dupSymbol(param));
             return true;
         } else tkerr("Lipseste identificatorul in parametrul functiei");
     }
@@ -394,8 +481,9 @@ bool exprCast() {
     tkDebug("#exprCast: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LPAR)) {
-        if(typeBase()) {
-            if(arrayDecl()) {
+        Type t;
+        if(typeBase(&t)) {
+            if(arrayDecl(&t)) {
                 if(consume(RPAR)) {
                     if(exprCast()) {
                         return true;
@@ -549,7 +637,7 @@ bool expr() {
 bool stm() {
     tkDebug("#stm: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
-    if(stmCompound()){
+    if(stmCompound(true)){
         return true;
     }
     // | IF LPAR expr RPAR stm ( ELSE stm )?
@@ -603,16 +691,20 @@ bool stm() {
 }
 
 // stmCompound: LACC ( varDef | stm )* RACC
-bool stmCompound() {
+bool stmCompound(bool newDomain) {
     tkDebug("#stmCompound: %s\n", tkCodeName(iTk->code));
     Token *start = iTk;
     if(consume(LACC)) {
+        if(newDomain)
+            pushDomain();
         for(;;){
             if(varDef()){}
             else if(stm()){}
             else break;
         }
         if(consume(RACC)){
+            if(newDomain)
+                dropDomain();
             return true;
         } else tkerr("Lipseste } in compound statement");
     }
@@ -625,10 +717,21 @@ bool stmCompound() {
 //               stmCompound
 bool fnDef(){
     tkDebug("#fnDef: %s\n", tkCodeName(iTk->code));
+    Type t;
     Token *start = iTk;
     if (consume(VOID)) {
+        t.tb = TB_VOID;
         if (consume(ID)) {
+            Token *tkName = consumedTk;
             if (consume(LPAR)) {
+                Symbol *fn = findSymbolInDomain(symTable,tkName->text);
+                if(fn)
+                    tkerr("symbol redefinition: %s",tkName->text);
+                fn = newSymbol(tkName->text,SK_FN);
+                fn->type = t;
+                addSymbolToDomain(symTable,fn);
+                owner = fn;
+                pushDomain();
                 if (fnParam()) {
                     for (;;) {
                         if (consume(COMMA)) {
@@ -643,16 +746,27 @@ bool fnDef(){
                     }
                 }
                 if (consume(RPAR)) {
-                    if (stmCompound()) {
+                    if (stmCompound(false)) {
+                        dropDomain();
+                        owner = NULL;
                         return true;
                     }
                 }
             } else tkerr("Lipseste ( in definirea functiei");
         } else tkerr("Lipseste identificatorul in definirea functiei");
     }
-    else if (typeBase()) {
+    else if (typeBase(&t)) {
         if (consume(ID)) {
+            Token *tkName = consumedTk;
             if (consume(LPAR)) {
+                Symbol *fn = findSymbolInDomain(symTable,tkName->text);
+                if(fn)
+                    tkerr("symbol redefinition: %s",tkName->text);
+                fn = newSymbol(tkName->text,SK_FN);
+                fn->type = t;
+                addSymbolToDomain(symTable,fn);
+                owner = fn;
+                pushDomain();
                 if (fnParam()) {
                     for (;;) {
                         if (consume(COMMA)) {
@@ -665,7 +779,9 @@ bool fnDef(){
                     }
                 }
                 if (consume(RPAR)) {
-                    if (stmCompound()) {
+                    if (stmCompound(false)) {
+                        dropDomain();
+                        owner = NULL;
                         return true;
                     }
                 }else tkerr("Lipseste ) in definirea functiei");
