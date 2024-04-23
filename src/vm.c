@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 
-#include "utils.h"
-#include "ad.h"
+#include "headers/utils.h"
+#include "headers/ad.h"
 
 
 Instr *addInstr(Instr **list,Opcode op){

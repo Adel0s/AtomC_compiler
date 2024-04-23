@@ -49,41 +49,41 @@ cmake_ninja_workdir = F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/cmake-build-debu
 
 build cmake_object_order_depends_target_AtomC_copy: phony || CMakeFiles/AtomC_copy.dir
 
-build CMakeFiles/AtomC_copy.dir/main.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/main.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\main.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/main.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/main.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\main.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
-build CMakeFiles/AtomC_copy.dir/lexer.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/lexer.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\lexer.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/lexer.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/lexer.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\lexer.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
-build CMakeFiles/AtomC_copy.dir/utils.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/utils.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\utils.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/utils.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/utils.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\utils.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
-build CMakeFiles/AtomC_copy.dir/parser.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/parser.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\parser.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/parser.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/parser.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\parser.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
-build CMakeFiles/AtomC_copy.dir/ad.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/ad.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\ad.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/ad.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/ad.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\ad.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
-build CMakeFiles/AtomC_copy.dir/vm.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/vm.c || cmake_object_order_depends_target_AtomC_copy
-  DEP_FILE = CMakeFiles\AtomC_copy.dir\vm.c.obj.d
+build CMakeFiles/AtomC_copy.dir/src/vm.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug F$:/Facultate/AN3-SEM2/LFTC/Project/AtomC/src/vm.c || cmake_object_order_depends_target_AtomC_copy
+  DEP_FILE = CMakeFiles\AtomC_copy.dir\src\vm.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir
-  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir
+  OBJECT_FILE_DIR = CMakeFiles\AtomC_copy.dir\src
 
 
 # =============================================================================
@@ -93,7 +93,7 @@ build CMakeFiles/AtomC_copy.dir/vm.c.obj: C_COMPILER__AtomC_copy_unscanned_Debug
 #############################################
 # Link the executable AtomC_copy.exe
 
-build AtomC_copy.exe: C_EXECUTABLE_LINKER__AtomC_copy_Debug CMakeFiles/AtomC_copy.dir/main.c.obj CMakeFiles/AtomC_copy.dir/lexer.c.obj CMakeFiles/AtomC_copy.dir/utils.c.obj CMakeFiles/AtomC_copy.dir/parser.c.obj CMakeFiles/AtomC_copy.dir/ad.c.obj CMakeFiles/AtomC_copy.dir/vm.c.obj
+build AtomC_copy.exe: C_EXECUTABLE_LINKER__AtomC_copy_Debug CMakeFiles/AtomC_copy.dir/src/main.c.obj CMakeFiles/AtomC_copy.dir/src/lexer.c.obj CMakeFiles/AtomC_copy.dir/src/utils.c.obj CMakeFiles/AtomC_copy.dir/src/parser.c.obj CMakeFiles/AtomC_copy.dir/src/ad.c.obj CMakeFiles/AtomC_copy.dir/src/vm.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\AtomC_copy.dir

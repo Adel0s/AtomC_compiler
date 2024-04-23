@@ -3,14 +3,14 @@ project(AtomC_copy C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(AtomC_copy main.c
-        lexer.c
-        lexer.h
-        utils.c
-        utils.h
-        parser.c
-        parser.h
-        ad.c
-        ad.h
-        vm.c
-        vm.h)
+add_executable(AtomC_copy src/main.c
+        src/lexer.c
+        src/headers/lexer.h
+        src/utils.c
+        src/headers/utils.h
+        src/parser.c
+        src/headers/parser.h
+        src/ad.c
+        src/headers/ad.h
+        src/vm.c
+        src/headers/vm.h)

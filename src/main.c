@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "utils.h"
-#include "lexer.h"
-#include "parser.h"
-#include "ad.h"
+#include "headers/utils.h"
+#include "headers/lexer.h"
+#include "headers/parser.h"
+#include "headers/ad.h"
 
 int main()
 {

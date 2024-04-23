@@ -3,10 +3,10 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#include "parser.h"
-#include "lexer.h"
-#include "ad.h"
-#include "utils.h"
+#include "headers/parser.h"
+#include "headers/lexer.h"
+#include "headers/ad.h"
+#include "headers/utils.h"
 
 #define DEBUG 0
 
