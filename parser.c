@@ -41,9 +41,9 @@ void tkDebug(const char *fmt,...){
 
 bool consume(int code){
     tkDebug("consume(%s)",tkCodeName(code));
-	if(iTk->code==code){
-		consumedTk=iTk;
-		iTk=iTk->next;
+	if(iTk->code == code){
+		consumedTk = iTk;
+		iTk = iTk->next;
         tkDebug(" => consumed\n");
 		return true;
 		}
@@ -56,30 +56,31 @@ bool consume(int code){
 // nu avem voie ca o functie sa cosume doar o parte din atomi
 bool typeBase(Type *t){
     tkDebug("#typeBase: %s\n", tkCodeName(iTk->code));
-    t->n=-1;
+    t->n = -1;
     Token *start = iTk;
 	if(consume(TYPE_INT)){
-        t->tb=TB_INT;
+        t->tb = TB_INT;
 		return true;
-		}
+    }
 	if(consume(TYPE_DOUBLE)){
-        t->tb=TB_DOUBLE;
+        t->tb = TB_DOUBLE;
 		return true;
-		}
+    }
 	if(consume(TYPE_CHAR)){
-        t->tb=TB_CHAR;
+        t->tb = TB_CHAR;
 		return true;
-		}
+    }
 	if(consume(STRUCT)){
 		if(consume(ID)){
             Token *tkName = consumedTk;
-            t->tb=TB_STRUCT;
-            t->s=findSymbol(tkName->text);
-            if(!t->s)tkerr("structura nedefinita: %s",tkName->text);
+            t->tb = TB_STRUCT;
+            t->s = findSymbol(tkName->text);
+            if(!t->s)
+                tkerr("structura nedefinita: %s",tkName->text);
 			return true;
-			}else tkerr("lipseste numele structurii!");
-		}
-    iTk=start; //refacere pozitie initiala -> necesar cand e posibil sa nu se consume totul
+        }else tkerr("lipseste numele structurii!");
+    }
+    iTk = start; //refacere pozitie initiala -> necesar cand e posibil sa nu se consume totul
 	return false;
 }
 
@@ -111,7 +112,8 @@ bool varDef(){
         if(consume(ID)){
             Token *tkName = consumedTk;
             if(arrayDecl(&t)){
-                if(t.n == 0) tkerr("a vector variable must have a specified dimension");
+                if(t.n == 0)
+                    tkerr("a vector variable must have a specified dimension");
                 if(consume(SEMICOLON)){
                     Symbol *var = findSymbolInDomain(symTable,tkName->text);
                     if(var)
@@ -215,12 +217,12 @@ bool fnParam() {
             Token *tkName = consumedTk;
             if(arrayDecl(&t)) {
                 t.n = 0;
-                return true;
+                // return true;
             }
             Symbol *param = findSymbolInDomain(symTable,tkName->text);
             if(param)
                 tkerr("symbol redefinition: %s",tkName->text);
-            param=newSymbol(tkName->text,SK_PARAM);
+            param = newSymbol(tkName->text,SK_PARAM);
             param->type = t;
             param->owner = owner;
             param->paramIdx = symbolsLen(owner->fn.params);
@@ -720,6 +722,7 @@ bool fnDef(){
     Type t;
     Token *start = iTk;
     if (consume(VOID)) {
+        t.n = -1; // ????
         t.tb = TB_VOID;
         if (consume(ID)) {
             Token *tkName = consumedTk;
