@@ -13,4 +13,6 @@ add_executable(AtomC_copy src/main.c
         src/ad.c
         src/headers/ad.h
         src/vm.c
-        src/headers/vm.h)
+        src/headers/vm.h
+        src/at.c
+        src/headers/at.h)
