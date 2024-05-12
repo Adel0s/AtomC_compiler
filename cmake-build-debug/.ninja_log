@@ -1,7 +1,7 @@
 # ninja log v5
 62	775	7337622473175353	CMakeFiles/AtomC_copy.dir/vm.c.obj	4a3c66355f334c55
 10	741	7337640013747716	CMakeFiles/AtomC_copy.dir/lexer.c.obj	807ce9e673975b5
-11	481	7367875818209478	build.ninja	cc772f888ed1acc
+11	481	7367882232238738	build.ninja	cc772f888ed1acc
 79	581	7310759687011425	CMakeFiles/AtomC_copy.dir/utils.c.obj	b7f6e854ffd33b41
 5	380	7355178383537303	CMakeFiles/AtomC_copy.dir/main.c.obj	427162688b5c45d2
 23	486	7355901891309589	CMakeFiles/AtomC_copy.dir/src/ad.c.obj	46ae4c037c295985
