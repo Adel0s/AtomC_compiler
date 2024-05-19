@@ -18,6 +18,8 @@ int main()
     // integrare analizor de domeniu
     pushDomain(); // creaza domeniul global in tabela de simboluri
 
+    vmInit(); // initializare masina virtuala
+
     // integrare analizor sintactic
     parse(tokens);
 
@@ -25,6 +27,10 @@ int main()
 
     // afisare domeniu
     showDomain(symTable,"global"); // afisare domeniu global
+
+    Instr *testCode = genTestProgramFloat(); // genereaza cod de test pentru masina virtuala
+    run(testCode); // executie cod masina virtual
+
     dropDomain(); // sterge domeniul global
 
     free(input_buffer);
