@@ -299,7 +299,7 @@ bool exprOrPrim(Ret *r)
         {
             Type tDst;
             if (!arithTypeTo(&r->type, &right.type, &tDst))
-                tkerr(iTk, "invalid operand type for ||");
+                tkerr(iTk->text, "invalid operand type for ||");
             *r = (Ret) {{TB_INT, NULL, -1}, false, true};
             if (exprOrPrim(r))
             {
