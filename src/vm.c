@@ -87,11 +87,11 @@ void pushf(double f){
 }
 
 void vmInit(){
-//    Symbol *fn=addExtFn("put_i",put_i,(Type){TB_VOID,NULL,-1});
-//    addFnParam(fn,"i",(Type){TB_INT,NULL,-1});
+    Symbol *fn=addExtFn("put_i",put_i,(Type){TB_VOID,NULL,-1});
+    addFnParam(fn,"i",(Type){TB_INT,NULL,-1});
 
-    Symbol *fn=addExtFn("put_d",put_d,(Type){TB_VOID,NULL,-1});
-    addFnParam(fn,"d",(Type){TB_DOUBLE,NULL,-1});
+    Symbol *fn2=addExtFn("put_d",put_d,(Type){TB_VOID,NULL,-1});
+    addFnParam(fn2,"d",(Type){TB_DOUBLE,NULL,-1});
 }
 
 void run(Instr *IP){
@@ -172,10 +172,10 @@ void run(Instr *IP){
                 IP=IP->next;
                 break;
             case OP_LESS_D:
-                dTop= popf();
-                dBefore= popf();
+                dTop = popf();
+                dBefore = popf();
                 pushi(dBefore<dTop);
-                printf("LESS.d\t// %f<%f -> %d",dBefore,dTop,dBefore<dTop);
+                printf("LESS.d\t\t// %f<%f -> %d",dBefore,dTop,dBefore<dTop);
                 IP=IP->next;
                 break;
             case OP_PUSH_D:
@@ -186,8 +186,8 @@ void run(Instr *IP){
             case OP_ADD_D:
                 dTop= popf();
                 dBefore= popf();
-                pushf(iBefore+iTop);
-                printf("ADD.d\t// %f+%f -> %f",dBefore,dTop,dBefore+dTop);
+                pushf(dBefore+dTop);
+                printf("ADD.d\t\t// %f+%f -> %f",dBefore,dTop,dBefore+dTop);
                 IP=IP->next;
                 break;
             default:err("run: instructiune neimplementata: %d",IP->op);
@@ -251,31 +251,33 @@ void f(double n){
 
 Instr *genTestProgramFloat(){
     Instr *code=NULL;
-    addInstrWithDouble(&code,OP_PUSH_D,2);
+    // f(2.0)
+    addInstrWithDouble(&code,OP_PUSH_D,2.0);
     Instr *callPos=addInstr(&code,OP_CALL);
     addInstr(&code,OP_HALT);
-    callPos->arg.instr=addInstrWithDouble(&code,OP_ENTER,1);
+    // Enter the function with 1 local variable (i)
+    callPos->arg.instr=addInstrWithInt(&code,OP_ENTER,1);
     // double i=0.0;
-    addInstrWithDouble(&code,OP_PUSH_D,0);
-    addInstrWithDouble(&code,OP_FPSTORE,1);
+    addInstrWithDouble(&code,OP_PUSH_D,0.0);
+    addInstrWithInt(&code,OP_FPSTORE,1);
     // while(i<n){
-    Instr *whilePos=addInstrWithDouble(&code,OP_FPLOAD,1);
-    addInstrWithDouble(&code,OP_FPLOAD,-2);
+    Instr *whilePos=addInstrWithInt(&code,OP_FPLOAD,1);
+    addInstrWithInt(&code,OP_FPLOAD,-2);
     addInstr(&code,OP_LESS_D);
     Instr *jfAfter=addInstr(&code,OP_JF);
-    // put_d(d);
-    addInstrWithDouble(&code,OP_FPLOAD,1);
+    // put_d(i);
+    addInstrWithInt(&code,OP_FPLOAD,1);
     Symbol *s=findSymbol("put_d");
     if(!s)err("undefined: put_d");
     addInstr(&code,OP_CALL_EXT)->arg.extFnPtr=s->fn.extFnPtr;
     // i=i+0.5;
-    addInstrWithDouble(&code,OP_FPLOAD,1);
-    addInstrWithDouble(&code,OP_PUSH_D,1);
+    addInstrWithInt(&code,OP_FPLOAD,1);
+    addInstrWithDouble(&code,OP_PUSH_D,0.5);
     addInstr(&code,OP_ADD_D);
-    addInstrWithDouble(&code,OP_FPSTORE,1);
-    // } ( the next iteration)
+    addInstrWithInt(&code,OP_FPSTORE,1);
+    // } ( the next iteration) - end of while loop, jump to start of while condition check
     addInstr(&code,OP_JMP)->arg.instr=whilePos;
     // returns from function
-    jfAfter->arg.instr=addInstrWithDouble(&code,OP_RET_VOID,1);
+    jfAfter->arg.instr=addInstrWithInt(&code,OP_RET_VOID,1);
     return code;
 }
