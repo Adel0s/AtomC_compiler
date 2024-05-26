@@ -7,7 +7,7 @@
 
 int main()
 {
-    char *input_buffer=loadFile("tests/testat.c");
+    char *input_buffer=loadFile("tests/testgc.c");
     //puts(input_buffer);
 
     // va returna lista atomilor extrasi din fisierul incarcat in input_buffer
@@ -25,11 +25,19 @@ int main()
 
     printf("\n");
 
+    // generare de cod
+    Symbol *symMain=findSymbolInDomain(symTable,"main");
+    if(!symMain)err("missing main function");
+    Instr *entryCode=NULL;
+    addInstr(&entryCode,OP_CALL)->arg.instr=symMain->fn.instr;
+    addInstr(&entryCode,OP_HALT);
+    run(entryCode);
+
     // afisare domeniu
     showDomain(symTable,"global"); // afisare domeniu global
 
-    Instr *testCode = genTestProgramFloat(); // genereaza cod de test pentru masina virtuala
-    run(testCode); // executie cod masina virtual
+//    Instr *testCode = genTestProgramFloat(); // genereaza cod de test pentru masina virtuala
+//    run(testCode); // executie cod masina virtual
 
     dropDomain(); // sterge domeniul global
 

@@ -1,7 +1,7 @@
 # ninja log v5
 62	775	7337622473175353	CMakeFiles/AtomC_copy.dir/vm.c.obj	4a3c66355f334c55
 10	741	7337640013747716	CMakeFiles/AtomC_copy.dir/lexer.c.obj	807ce9e673975b5
-11	481	7384451432369196	build.ninja	cc772f888ed1acc
+11	481	7384461425532750	build.ninja	cc772f888ed1acc
 79	581	7310759687011425	CMakeFiles/AtomC_copy.dir/utils.c.obj	b7f6e854ffd33b41
 5	380	7355178383537303	CMakeFiles/AtomC_copy.dir/main.c.obj	427162688b5c45d2
 88	503	7378469007344032	CMakeFiles/AtomC_copy.dir/src/ad.c.obj	46ae4c037c295985
@@ -14,3 +14,14 @@
 28	524	7355901891729585	CMakeFiles/AtomC_copy.dir/src/lexer.c.obj	ff4925b48bb6353a
 132	548	7378469007793993	CMakeFiles/AtomC_copy.dir/src/parser.c.obj	a6a44bf19dc83ad1
 109	473	7378469007024013	CMakeFiles/AtomC_copy.dir/src/at.c.obj	aeaa9345d2ff6b42
+144	562	7384536729624143	CMakeFiles/AtomC_copy.dir/src/gc.c.obj	e141a5fcf693a38d
+20	567	7384536729854165	CMakeFiles/AtomC_copy.dir/src/main.c.obj	673d00626898337d
+30	571	7384536729874136	CMakeFiles/AtomC_copy.dir/src/at.c.obj	aeaa9345d2ff6b42
+96	613	7384536730344157	CMakeFiles/AtomC_copy.dir/src/ad.c.obj	46ae4c037c295985
+121	644	7384536730524211	CMakeFiles/AtomC_copy.dir/src/vm.c.obj	70207826e76c12ed
+60	670	7384536730934166	CMakeFiles/AtomC_copy.dir/src/parser.c.obj	a6a44bf19dc83ad1
+670	1011	7384536734334211	AtomC_copy.exe	12a2f623c1ac1d91
+3	217	7384537269297371	CMakeFiles/AtomC_copy.dir/src/main.c.obj	673d00626898337d
+217	375	7384537270827988	AtomC_copy.exe	12a2f623c1ac1d91
+6	444	7384539270827754	CMakeFiles/AtomC_copy.dir/src/main.c.obj	673d00626898337d
+445	702	7384539273337538	AtomC_copy.exe	12a2f623c1ac1d91
