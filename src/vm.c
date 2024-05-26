@@ -240,7 +240,7 @@ Instr *genTestProgram(){
 /*
 The program implements the following AtomC source code:
 f(2.0);
-void f(double n){
+void f(double n){       // stack frame: n[-2] ret[-1] oldFP[0] i[1]
     double i=0.0;
     while(i<n){
         put_d(i);
